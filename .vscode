@@ -1,0 +1,7 @@
+{
+    "intelephense.environment.includePaths": [
+        "system",
+        "app"
+    ],
+    "php.suggest.basic": false
+}
