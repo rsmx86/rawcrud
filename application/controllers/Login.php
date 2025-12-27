@@ -11,36 +11,59 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Login extends CI_Controller {
 
-    // Exibe tela de login e captura erro da URL
+    /**
+     * Exibe a tela de login inicial
+     * Captura eventuais erros de autenticação passados via GET
+     */
     public function index() {
         $data['erro'] = $this->input->get('erro');
         $this->load->view('v_login', $data);
     }
 
-    // Processa a tentativa de login
+    /**
+     * Processa a tentativa de login do operador
+     * Valida as credenciais e estabelece a hierarquia de acesso (Rank)
+     */
     public function autenticar() {
+        // Carrega o modelo de dados do usuário
         $this->load->model('usuario_model');
         
+        // Captura os dados vindos do formulário (v_login)
         $email = $this->input->post('email');
         $senha = $this->input->post('senha');
 
+        // Consulta o banco de dados via Model
         $usuario = $this->usuario_model->logar($email, $senha);
 
         if ($usuario) {
-            // Configura os dados da sessão (Crachá)
-            $this->session->set_userdata([
+            /**
+             * SESSÃO ESTABELECIDA:
+             * Aqui definimos o "Crachá Virtual" do usuário.
+             * Se o campo 'nivel' estiver vazio no banco, o sistema assume 'Mechanic' por padrão.
+             */
+            $dados_sessao = [
                 'nome'   => $usuario->nome,
-                'nivel'  => $usuario->nivel,
+                'nivel'  => (!empty($usuario->nivel)) ? $usuario->nivel : 'Mechanic',
                 'logado' => TRUE
-            ]);
+            ];
+
+            $this->session->set_userdata($dados_sessao);
+
+            // Redireciona para o Painel Principal (Workstation)
             redirect(site_url('painel')); 
         } else {
-            // Falha: Redireciona com flag de erro
+            /**
+             * FALHA NA AUTENTICAÇÃO:
+             * Redireciona de volta para o login com a flag de erro.
+             */
             redirect(site_url('login?erro=1'));
         }
     }
 
-    // Destrói a sessão e volta para o início
+    /**
+     * Finaliza a sessão atual (Logoff)
+     * Limpa todos os dados do 'Crachá' e retorna à tela de entrada
+     */
     public function sair() {
         $this->session->sess_destroy();
         redirect(site_url('login'));
