@@ -1,10 +1,11 @@
 ##Projeto RAW CRUD##
 
-/*~Projeto iniciado com o intuito de aprendizado de estrutura e tipagem com pouco uso ou nenhum de CSS e JS,
- seguindo ideia do "brutalismo" com HTML e PHP puro
-*/
-Tecnologias Utilizadas
+/*~Projeto iniciado com o intuito de aprendizado de estrutura e tipagem com pouco uso ou nenhum de CSS e JS
 
-**PHP 7.4+**
-**CodeIgnter3**
-**MySQL**
+# RAWCRUD
+Sistema CRUD feito com CodeIgniter 3.
+
+## Status
+- [x] Login com Bcrypt
+- [x] Proteção de Rotas
+- [ ] Listagem de Usuários 

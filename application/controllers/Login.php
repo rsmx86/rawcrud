@@ -2,19 +2,22 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * @property Usuario_model $usuario_model
- * @property CI_Input $input
- * @property CI_Session $session
- * @property CI_Loader $load
+ * Anotações para o editor reconhecer as bibliotecas do CodeIgniter (IntelliSense)
+ * @property Usuario_model $usuario_model Instância do nosso modelo de usuário
+ * @property CI_Input $input Biblioteca de tratamento de dados de entrada (POST/GET)
+ * @property CI_Session $session Biblioteca de gerenciamento de sessões
+ * @property CI_Loader $load Biblioteca que carrega arquivos (views/models)
  */
 
 class Login extends CI_Controller {
 
+    // Exibe tela de login e captura erro da URL
     public function index() {
-        // Carrega a tela de login (View) que vamos criar já já
-        $this->load->view('v_login');
+        $data['erro'] = $this->input->get('erro');
+        $this->load->view('v_login', $data);
     }
 
+    // Processa a tentativa de login
     public function autenticar() {
         $this->load->model('usuario_model');
         
@@ -24,19 +27,22 @@ class Login extends CI_Controller {
         $usuario = $this->usuario_model->logar($email, $senha);
 
         if ($usuario) {
-            // Se logou, guarda os dados na SESSÃO
-            $dados_sessao = array(
-                'id' => $usuario->id,
-                'nome' => $usuario->nome,
-                'nivel' => $usuario->nivel,
+            // Configura os dados da sessão (Crachá)
+            $this->session->set_userdata([
+                'nome'   => $usuario->nome,
+                'nivel'  => $usuario->nivel,
                 'logado' => TRUE
-            );
-            $this->session->set_userdata($dados_sessao);
-            
-            echo "Logado com sucesso! Bem-vindo, " . $usuario->nome;
-            // No futuro, aqui redirecionamos para o painel
+            ]);
+            redirect(site_url('painel')); 
         } else {
-            echo "E-mail ou senha incorretos.";
+            // Falha: Redireciona com flag de erro
+            redirect(site_url('login?erro=1'));
         }
+    }
+
+    // Destrói a sessão e volta para o início
+    public function sair() {
+        $this->session->sess_destroy();
+        redirect(site_url('login'));
     }
 }
