@@ -21,8 +21,10 @@ class Usuario_model extends CI_Model {
      * Lista todos os operadores para a tabela do Windows NT
      */
     public function listar_todos() {
-        return $this->db->get('usuarios')->result();
-    }
+    // Ordem personalizada: Garage Chief (1º), Chief Mechanic (2º), Mechanic (3º)
+    $this->db->order_by("FIELD(nivel, 'Garage Chief', 'Chief Mechanic', 'Mechanic')");
+    return $this->db->get('usuarios')->result();
+}
 
     /**
      * Salva o novo operador vindo da "Ficha de Registro"
@@ -30,4 +32,25 @@ class Usuario_model extends CI_Model {
     public function salvar_novo($dados) {
         return $this->db->insert('usuarios', $dados);
     }
+
+    public function inserir($dados) {
+    return $this->db->insert('usuarios', $dados);
+}
+
+public function buscar_por_id($id) {
+    $this->db->where('id', $id);
+    return $this->db->get('usuarios')->row(); // row() retorna apenas um objeto
+}
+
+public function atualizar($id, $dados) {
+    $this->db->where('id', $id);
+    return $this->db->update('usuarios', $dados);
+}
+
+public function deletar($id) {
+    $this->db->where('id', $id);
+    return $this->db->delete('usuarios');
+}
+
+
 }
