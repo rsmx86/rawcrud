@@ -45,28 +45,32 @@
             </table>
 
             <?php if($ativa == 'clientes'): ?>
-            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; 
-                border: 2px solid #FFFFFF; border-right: 2px solid #808080; 
-                border-bottom: 0px; background: #D6D2C4; 
-                position:relative; top: 2px; margin-left: -2px; z-index: 10;">
-                <tr>
-                    <td>
-                        <font face="Arial" size="3"><b><u>C</u>lients_DB</b></font>
-                    </td>
-                </tr>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>C</u>lients_DB</b></font></td></tr>
             </table>
             <?php endif; ?>
 
             <?php if($ativa == 'usuarios'): ?>
-            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; 
-                border: 2px solid #FFFFFF; border-right: 2px solid #808080; 
-                border-bottom: 0px; background: #D6D2C4; 
-                position:relative; top: 2px; margin-left: -2px; z-index: 10;">
-                <tr>
-                    <td>
-                        <font face="Arial" size="3"><b><u>O</u>perators_DB</b></font>
-                    </td>
-                </tr>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>O</u>perators_DB</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+            <?php if($ativa == 'estoque'): ?>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>S</u>tock_Inventory</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+            <?php if($ativa == 'catalogo'): ?>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>P</u>roduct_Registry</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+            <?php if($ativa == 'invoice'): ?>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>I</u>nvoice_Entry</b></font></td></tr>
             </table>
             <?php endif; ?>
 

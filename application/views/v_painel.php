@@ -46,32 +46,41 @@
                                 </tr>
                             </table>
 
+
+
                             <hr size="1" color="#808080" noshade style="margin: 20px 0;">
 
                             <table width="100%" border="0" cellspacing="10" cellpadding="0">
                                 <tr>
                                     <td width="65%" valign="top">
-                                        <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer; margin-bottom: 15px;">
-                                            <tr>
-                                                <td>
-                                                    <font face="Arial Black" size="4" color="#A00000">📄 INVOICE_ENTRY</font><br>
-                                                    <font face="Arial" size="3">Registrar novas notas fiscais e entradas de estoque.</font>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" 
+       style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer; margin-bottom: 15px;"
+       onclick="window.location.href='<?= site_url('invoice'); ?>'">
+    <tr>
+        <td>
+            <font face="Arial Black" size="4" color="#A00000">📄 INVOICE_ENTRY</font><br>
+            <font face="Arial" size="3">Registrar novas notas fiscais e entradas de estoque.</font>
+        </td>
+    </tr>
+</table>
 
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td width="50%" style="padding-right:7px;">
-                                                    <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer;">
-                                                        <tr>
-                                                            <td>
-                                                                <font face="Arial Black" size="3" color="#000000">📦 STOCK_INV</font><br>
-                                                                <font face="Arial" size="2">Gestão de peças e componentes.</font>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
+    <a href="<?= site_url('estoque'); ?>" style="text-decoration:none;">
+        <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" 
+               style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer;"
+               onmouseover="this.style.background='#D6D2C4'" 
+               onmouseout="this.style.background='#C0C0C0'">
+            <tr>
+                <td>
+                    <font face="Arial Black" size="3" color="#000000">📦 STOCK_INV</font><br>
+                    <font face="Arial" size="2" color="#000000">Gestão de peças e componentes.</font>
+                </td>
+            </tr>
+        </table>
+    </a>
+</td>
                                                 <td width="50%" style="padding-left:7px;">
                                                     <?php if(in_array($user_nivel, ['Garage Chief', 'ADM'])): ?>
                                                     <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer;">
