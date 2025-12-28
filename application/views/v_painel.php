@@ -33,6 +33,15 @@
                                             </tr>
                                         </table>
                                         <?php endif; ?>
+
+                                        <table border="0" cellpadding="8" cellspacing="0" bgcolor="#C0C0C0" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url('clientes'); ?>'">
+                                            <tr>
+                                                <td align="center">
+                                                    <font size="5">📇</font><br>
+                                                    <font face="Arial" size="1"><b>CUSTOMER_DB</b></font>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
@@ -42,7 +51,6 @@
                             <table width="100%" border="0" cellspacing="10" cellpadding="0">
                                 <tr>
                                     <td width="65%" valign="top">
-                                        
                                         <table width="100%" border="0" cellpadding="20" cellspacing="0" bgcolor="#C0C0C0" style="border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor: pointer; margin-bottom: 15px;">
                                             <tr>
                                                 <td>
@@ -116,7 +124,7 @@
                 <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#C0C0C0" style="border-top: 1px solid #808080;">
                     <tr>
                         <td><font face="Arial" size="2">&nbsp;<b>Status:</b> Ready</font></td>
-                        <td align="right"><font face="Arial" size="2">RAW_CRUD_SYSTEM_0.2.1&nbsp;</font></td>
+                        <td align="right"><font face="Arial" size="2">RAW_CRUD_SYSTEM_0.3.1&nbsp;</font></td>
                     </tr>
                 </table>
             </td>

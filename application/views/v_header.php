@@ -25,7 +25,6 @@
         <td height="38" valign="bottom">
             &nbsp;
             <?php 
-                // Verifica qual página está ativa (enviado pelo Controller)
                 $ativa = (isset($pagina_ativa)) ? $pagina_ativa : 'dashboard'; 
             ?>
 
@@ -45,6 +44,19 @@
                 </tr>
             </table>
 
+            <?php if($ativa == 'clientes'): ?>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; 
+                border: 2px solid #FFFFFF; border-right: 2px solid #808080; 
+                border-bottom: 0px; background: #D6D2C4; 
+                position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr>
+                    <td>
+                        <font face="Arial" size="3"><b><u>C</u>lients_DB</b></font>
+                    </td>
+                </tr>
+            </table>
+            <?php endif; ?>
+
             <?php if($ativa == 'usuarios'): ?>
             <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; 
                 border: 2px solid #FFFFFF; border-right: 2px solid #808080; 
@@ -58,20 +70,10 @@
             </table>
             <?php endif; ?>
 
-            <?php if($ativa == 'estoque'): ?>
-            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; 
-                border: 2px solid #FFFFFF; border-right: 2px solid #808080; 
-                border-bottom: 0px; background: #D6D2C4; 
-                position:relative; top: 2px; margin-left: -2px; z-index: 10;">
-                <tr>
-                    <td><font face="Arial" size="3"><b>Stock_Inventory</b></font></td>
-                </tr>
-            </table>
-            <?php endif; ?>
         </td>
         <td align="right" valign="middle">
             <font face="Arial" size="3">
-                <a href="<?= site_url('login/sair'); ?>"><b>[ LOGOFF ]</b></a>&nbsp;
+                <a href="<?= site_url('login/sair'); ?>" style="text-decoration:none;"><b>[ LOGOFF ]</b></a>&nbsp;
             </font>
         </td>
     </tr>
