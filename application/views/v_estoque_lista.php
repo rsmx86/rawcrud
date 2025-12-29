@@ -9,6 +9,16 @@
                 <button onclick="window.location.href='<?= site_url('estoque/catalogo') ?>'" style="background:#C0C0C0; border: 2px solid #FFFFFF; border-right-color: #808080; border-bottom-color: #808080; cursor:pointer; padding:5px;">
                     <b>[ 📑 ] Product Catalog</b>
                 </button>
+                &nbsp;
+                <button onclick="window.location.href='<?= site_url('estoque/painel_saida') ?>'" style="background:#C0C0C0; border: 2px solid #FFFFFF; border-right-color: #808080; border-bottom-color: #808080; cursor:pointer; padding:5px;">
+                    <b>[ 🕊️ ] DISPATCH</b>
+                </button>
+                &nbsp;
+                <?php if($this->session->userdata('cargo') == 'Garage Chief'): ?>
+                <button onclick="window.location.href='<?= site_url('configuracoes') ?>'" style="background:#C0C0C0; border: 2px solid #FFFFFF; border-right-color: #808080; border-bottom-color: #808080; cursor:pointer; padding:5px;">
+                    <b>[ ⚙️ ] Control Panel</b>
+                </button>
+                <?php endif; ?>
             </td>
             <td align="right">
                 <font face="Arial" size="2"><b>VIEW: PHYSICAL_STOCK</b></font>
@@ -45,22 +55,19 @@
             </tr>
         <?php else: ?>
             <?php foreach($itens as $i): ?>
+                <?php 
+                    $text_color = "#000000"; 
+                    if($i->status_posicao == 'NON_COMPLIANCE') $text_color = "#0000FF"; // Azul
+                    if($i->status_posicao == 'QUARANTINE') $text_color = "#FF0000";     // Vermelho
+                ?>
                 <tr bgcolor="#FFFFFF">
-                    <td><font face="Arial" size="2"><?= $i->codigo_produto ?></font></td>
-                    <td><font face="Arial" size="2"><?= $i->nome_produto ?></font></td>
-                    <td><font face="Arial" size="2">STREET: <b><?= $i->rua ?></b> / POS: <b><?= $i->posicao ?></b></font></td>
-                    <td><font face="Arial" size="2"><?= ($i->lote == "" || $i->lote == "N/A") ? '<i style="color:gray;">none</i>' : $i->lote ?></font></td>
-                    <td align="right" bgcolor="#E8E8E8"><font face="Arial" size="2"><b><?= $i->quantidade ?></b></font></td>
+                    <td><font face="Arial" size="2" color="<?= $text_color ?>"><?= $i->codigo_produto ?></font></td>
+                    <td><font face="Arial" size="2" color="<?= $text_color ?>"><?= $i->nome_produto ?></font></td>
+                    <td><font face="Arial" size="2" color="<?= $text_color ?>">STREET: <b><?= $i->rua ?></b> / POS: <b><?= $i->posicao ?></b></font></td>
+                    <td><font face="Arial" size="2" color="<?= $text_color ?>"><?= ($i->lote == "" || $i->lote == "N/A") ? 'none' : $i->lote ?></font></td>
+                    <td align="right" bgcolor="#E8E8E8"><font face="Arial" size="2" color="<?= $text_color ?>"><b><?= $i->quantidade ?></b></font></td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
     </table>
 </div>
-
-<script>
-function buscarNota() {
-    var n = document.getElementById('nota_busca').value;
-    if(n == "") { alert("Please enter an Invoice Number"); return; }
-    window.location.href = "<?= site_url('estoque/alocar_nota/'); ?>" + n;
-}
-</script>

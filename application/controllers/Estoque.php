@@ -135,4 +135,36 @@ class Estoque extends CI_Controller {
         $this->Estoque_model->eliminar_catalogo($id);
         redirect('estoque/catalogo');
     }
+
+// 1. Função para DAR BAIXA (SAÍDA / DISPATCH)
+public function release_item($id) {
+    // Buscamos os dados antes de deletar para saber qual posição foi liberada
+    $this->db->where('id', $id);
+    $item = $this->db->get('estoque_v2')->row();
+
+    if ($item) {
+        // Remove do estoque e libera a Rua/Posição para novas entradas
+        $this->db->where('id', $id);
+        $this->db->delete('estoque_v2'); 
+        
+        $this->session->set_flashdata('sucesso', 'SUCCESS: Item DISPATCHED. Slot ['.$item->rua.' / '.$item->posicao.'] is now vacant.');
+    } else {
+        $this->session->set_flashdata('erro', 'ERROR: Item not found.');
+    }
+    
+    redirect('estoque');
+}
+
+// 2. Função para BLOQUEAR (NÃO CONFORMIDADE)
+public function bloquear_posicao($id_estoque) {
+    $data = ['status_posicao' => 'NON_COMPLIANCE']; // Define o status de bloqueio
+    $this->db->where('id', $id_estoque);
+    $this->db->update('estoque_v2', $data);
+    
+    $this->session->set_flashdata('erro', 'POSITION_LOCKED: Non-compliance reported.');
+    redirect('estoque');
+}
+
+
+
 }

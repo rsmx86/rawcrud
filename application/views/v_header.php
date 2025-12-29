@@ -74,6 +74,9 @@
             </table>
             <?php endif; ?>
 
+            &nbsp;
+            
+
         </td>
         <td align="right" valign="middle">
             <font face="Arial" size="3">
@@ -83,5 +86,23 @@
     </tr>
 </table>
 
+
+
 <div style="border-top: 1px solid #FFFFFF; border-bottom: 2px solid #808080; height: 1px; background: #D6D2C4; position:relative; z-index:1; top:-1px;"></div>
 <br>
+
+<?php if($ativa == 'invoice'): ?>
+            <table border="0" cellspacing="0" cellpadding="8" style="display:inline-table; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 0px; background: #D6D2C4; position:relative; top: 2px; margin-left: -2px; z-index: 10;">
+                <tr><td><font face="Arial" size="3"><b><u>I</u>nvoice_Entry</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+            &nbsp;
+            <?php if(trim($this->session->userdata('nivel')) == 'Garage Chief'): ?>
+                <button onclick="window.location.href='<?= site_url('configuracoes') ?>'" 
+                        style="background:#C0C0C0; border: 2px solid #FFFFFF; border-right: 2px solid #808080; border-bottom: 2px solid #808080; cursor:pointer; padding:5px; position:relative; top: -2px;">
+                    <font face="Arial" size="1"><b>[ ⚙️ ] Control Panel</b></font>
+                </button>
+            <?php endif; ?>
+
+        </td> 
