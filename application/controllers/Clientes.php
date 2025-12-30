@@ -1,38 +1,49 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Módulo de Gerenciamento de Clientes e Veículos
+ * Centraliza o cadastro de clientes e perfis de uso dos veículos.
+ */
 class Clientes extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        if (!$this->session->userdata('id_usuario')) {
-            redirect('login');
-        }
+        // Proteção de Sessão
+        if (!$this->session->userdata('id_usuario')) { redirect('login'); }
         $this->load->model('Cliente_model');
     }
 
-    // LISTA DE CLIENTES
+    /**
+     * Listagem Geral de Clientes
+     */
     public function index() {
         $dados['pagina_ativa'] = 'clientes'; 
-        // Ajustado para o nome real da função no seu model:
         $dados['clientes'] = $this->Cliente_model->listar_todos(); 
 
         $this->load->view('v_header', $dados);
         $this->load->view('v_clientes_lista', $dados); 
     }
 
-    // ABRE FORMULÁRIO NOVO
+    /**
+     * Interface: Formulário de Novo Cadastro
+     */
     public function novo() {
         $dados['pagina_ativa'] = 'clientes'; 
         $this->load->view('v_header', $dados);
         $this->load->view('v_clientes_novo');
     }
 
+    /**
+     * Processa a Gravação do Cliente e Veículo
+     */
     public function salvar() {
         $data = $this->input->post();
-        $data['uso_drift'] = isset($data['uso_drift']) ? 1 : 0;
-        $data['uso_track_day'] = isset($data['uso_track_day']) ? 1 : 0;
-        $data['uso_rua'] = isset($data['uso_rua']) ? 1 : 0;
+        
+        // Normalização de Checkboxes (Booleano)
+        $data['uso_drift']      = isset($data['uso_drift']) ? 1 : 0;
+        $data['uso_track_day']  = isset($data['uso_track_day']) ? 1 : 0;
+        $data['uso_rua']        = isset($data['uso_rua']) ? 1 : 0;
         $data['uso_competicao'] = isset($data['uso_competicao']) ? 1 : 0;
 
         if ($this->Cliente_model->salvar($data)) {
@@ -42,6 +53,9 @@ class Clientes extends CI_Controller {
         }
     }
 
+    /**
+     * Interface: Ficha Detalhada do Cliente (Visualização)
+     */
     public function visualizar($id) {
         $dados['pagina_ativa'] = 'clientes'; 
         $this->db->where('id', $id);
@@ -53,6 +67,9 @@ class Clientes extends CI_Controller {
         $this->load->view('v_clientes_ficha', $dados);
     }
 
+    /**
+     * Interface: Formulário de Edição
+     */
     public function editar($id) {
         $dados['pagina_ativa'] = 'clientes'; 
         $this->db->where('id', $id);
@@ -64,14 +81,19 @@ class Clientes extends CI_Controller {
         }
 
         $this->load->view('v_header', $dados);
-        $this->load->view('v_clientes_novo', $dados);
+        $this->load->view('v_clientes_novo', $dados); // Reaproveita v_clientes_novo para edição
     }
 
+    /**
+     * Processa a Atualização de Cadastro
+     */
     public function atualizar($id) {
         $data = $this->input->post();
-        $data['uso_drift'] = isset($data['uso_drift']) ? 1 : 0;
-        $data['uso_track_day'] = isset($data['uso_track_day']) ? 1 : 0;
-        $data['uso_rua'] = isset($data['uso_rua']) ? 1 : 0;
+        
+        // Normalização de Checkboxes
+        $data['uso_drift']      = isset($data['uso_drift']) ? 1 : 0;
+        $data['uso_track_day']  = isset($data['uso_track_day']) ? 1 : 0;
+        $data['uso_rua']        = isset($data['uso_rua']) ? 1 : 0;
         $data['uso_competicao'] = isset($data['uso_competicao']) ? 1 : 0;
 
         $this->db->where('id', $id);
@@ -82,6 +104,9 @@ class Clientes extends CI_Controller {
         }
     }
 
+    /**
+     * Exclui Cliente do Sistema
+     */
     public function deletar($id) {
         $this->db->where('id', $id);
         if ($this->db->delete('clientes')) {
