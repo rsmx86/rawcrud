@@ -35,11 +35,9 @@
                                         <tr><td align="center"><font size="4">📇</font><br><font face="Arial" size="1"><b>CUSTOMERS</b></font></td></tr>
                                     </table>
 
-                                    <?php if($user_nivel == 'Garage Chief'): ?>
-                                        <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url('configuracoes'); ?>'">
-                                            <tr><td align="center"><font size="4">⚙️</font><br><font face="Arial" size="1"><b>SETTINGS</b></font></td></tr>
-                                        </table>
-                                    <?php endif; ?>
+                                    <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url('catalogo'); ?>'">
+                                        <tr><td align="center"><font size="4">📚</font><br><font face="Arial" size="1"><b>CATALOG</b></font></td></tr>
+                                    </table>
                                 </td>
                             </tr>
                         </table>
@@ -50,7 +48,7 @@
                             <tr>
                                 <td width="65%" valign="top">
                                     
-                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url('invoice'); ?>'">
+                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url('invoices'); ?>'">
                                         <tr>
                                             <td>
                                                 <font face="Arial Black" size="4" color="#A00000">📄 INVOICE_ENTRY</font><br>
@@ -68,7 +66,7 @@
                                             </td>
                                             <td width="4%"></td>
                                             <td width="48%">
-                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url('estoque/painel_requisicoes'); ?>'">
+                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url('requisicoes'); ?>'">
                                                     <tr><td><font face="Arial Black" size="3" color="#000080">🕊️ DISPATCH</font><br><font face="Arial" size="1">Saída e expedição.</font></td></tr>
                                                 </table>
                                             </td>
