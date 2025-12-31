@@ -44,6 +44,9 @@
             </table>
             <?php endif; ?>
 
+
+
+
             <?php if($ativa == 'usuarios'): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>O</u>perators_DB</b></font></td></tr>
@@ -55,6 +58,19 @@
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>S</u>tock_Inventory</b></font></td></tr>
             </table>
             <?php endif; ?>
+
+                 <?php if($ativa == 'catalogo/v_lista' || $ativa =='catalogo/v_novo' ): ?>
+            <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
+                <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>C</u>atalog</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+
+            <?php if($ativa == 'requisicoes/v_lista') : ?>
+<table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
+    <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>D</u>ispatch_Manager</b></font></td></tr>
+</table>
+<?php endif; ?>
 
             <?php if($ativa == 'invoice'): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">

@@ -11,15 +11,20 @@ class Requisicoes extends CI_Controller {
 
     // Listagem de todas as ordens de saída
     public function index() {
-        $this->db->select('r.*, c.nome_completo as nome_cliente');
-        $this->db->from('requisicoes r');
-        $this->db->join('clientes c', 'c.id = r.id_cliente');
-        $this->db->order_by('r.id', 'DESC');
-        $dados['requisicoes'] = $this->db->get()->result();
+    $this->db->select('r.*, c.nome_completo as nome_cliente');
+    $this->db->from('requisicoes r');
+    $this->db->join('clientes c', 'c.id = r.id_cliente');
+    $this->db->order_by('r.id', 'DESC');
+    $dados['requisicoes'] = $this->db->get()->result();
 
-        $this->load->view('v_header');
-        $this->load->view('requisicoes/v_lista', $dados);
-    }
+    //  a variável ANTES de carregar as views
+    // 
+    $dados['pagina_ativa'] = 'requisicoes/v_lista'; 
+
+    // 3. Passe o array $dados também para o v_header
+    $this->load->view('v_header', $dados); 
+    $this->load->view('requisicoes/v_lista', $dados);
+}
 
     // Formulário de nova requisição
     public function nova() {
