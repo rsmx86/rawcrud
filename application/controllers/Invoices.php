@@ -234,6 +234,37 @@ public function remover_item($id_item, $id_invoice) {
     redirect('invoices/montar_itens/' . $id_invoice);
 }
 
+public function deletar($id_invoice) {
+    // 1. Iniciamos uma transação para garantir que ou apaga tudo ou não apaga nada
+    $this->db->trans_start();
+
+    // 2. BUSCA OS ITENS DA NOTA PARA SABER O QUE REMOVER DO ESTOQUE
+    // Precisamos fazer isso antes de deletar os itens da nota
+    $itens_da_nota = $this->db->get_where('invoice_items', ['id_invoice' => $id_invoice])->result();
+
+    foreach ($itens_da_nota as $item) {
+        // 3. REMOVE DO ESTOQUE_V2
+        // Usamos o ID do item da nota como referência para não apagar o produto errado
+        $this->db->where('id_invoice_item', $item->id);
+        $this->db->delete('estoque_v2');
+    }
+
+    // 4. DELETA OS ITENS DA NOTA
+    $this->db->where('id_invoice', $id_invoice);
+    $this->db->delete('invoice_items');
+
+    // 5. DELETA A CAPA DA NOTA
+    $this->db->where('id', $id_invoice);
+    $this->db->delete('invoices');
+
+    $this->db->trans_complete();
+
+    if ($this->db->trans_status() === FALSE) {
+        echo "<script>alert('Erro ao deletar nota e limpar estoque.'); history.back();</script>";
+    } else {
+        redirect('invoices');
+    }
+}
 
 
 }

@@ -52,13 +52,21 @@
                         <button onclick="window.location.href='<?= site_url('requisicoes'); ?>'" style="width:150px; height:25px;">&lt;&lt; BACK_TO_LIST</button>
                     </td>
                     <td align="right">
-                        <form action="<?= site_url('requisicoes/finalizar_saida') ?>" method="post" style="margin:0;">
-                            <input type="hidden" name="id_requisicao" value="<?= $requisicao->id ?>">
-                            <button type="submit" style="background-color: #008000; color: white; font-weight: bold; height: 30px;">
-                                [ CONFIRM_PICKING_AND_SHIP ]
-                            </button>
-                        </form>
-                    </td>
+    <?php if ($requisicao->status_requisicao != 'FINALIZADA'): ?>
+        <form action="<?= site_url('requisicoes/finalizar_saida') ?>" method="post" style="margin:0;">
+            <input type="hidden" name="id_requisicao" value="<?= $requisicao->id ?>">
+            <button type="submit" style="background-color: #008000; color: white; font-weight: bold; height: 30px; cursor: pointer;">
+                [ CONFIRM_PICKING_AND_SHIP ]
+            </button>
+        </form>
+    <?php else: ?>
+        <table border="1" bordercolor="#008000" bgcolor="#E1E1E1" cellpadding="5">
+            <tr>
+                <td><font color="#008000" size="1"><b>COMPLETED_ORDER // NO_PENDING_ACTIONS</b></font></td>
+            </tr>
+        </table>
+    <?php endif; ?>
+</td>
                 </tr>
             </table>
 
