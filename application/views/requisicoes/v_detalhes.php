@@ -53,19 +53,16 @@
                     </td>
                     <td align="right">
     <?php if ($requisicao->status_requisicao != 'FINALIZADA'): ?>
-        <form action="<?= site_url('requisicoes/finalizar_saida') ?>" method="post" style="margin:0;">
-            <input type="hidden" name="id_requisicao" value="<?= $requisicao->id ?>">
-            <button type="submit" style="background-color: #008000; color: white; font-weight: bold; height: 30px; cursor: pointer;">
-                [ CONFIRM_PICKING_AND_SHIP ]
-            </button>
-        </form>
-    <?php else: ?>
-        <table border="1" bordercolor="#008000" bgcolor="#E1E1E1" cellpadding="5">
-            <tr>
-                <td><font color="#008000" size="1"><b>COMPLETED_ORDER // NO_PENDING_ACTIONS</b></font></td>
-            </tr>
-        </table>
-    <?php endif; ?>
+    <button onclick="if(confirm('CONFIRM SHIPMENT? This will deduct from physical stock.')) 
+            window.location.href='<?= site_url('requisicoes/confirmar_picking/'.$requisicao->id); ?>'" 
+            style="background:#008000; color:#FFF; font-weight:bold; padding:10px;">
+        [ CONFIRM PICKING AND SHIP ]
+    </button>
+<?php else: ?>
+    <div style="border:2px dashed #008000; color:#008000; padding:10px; text-align:center;">
+        <b>ORDER SHIPPED / STOCK UPDATED</b>
+    </div>
+<?php endif; ?>
 </td>
                 </tr>
             </table>
@@ -73,4 +70,19 @@
         </td>
     </tr>
 </table>
+
+<?php if($requisicao->status_requisicao == 'PICKING'): ?>
+    <div style="background:#FFF3CD; border:1px solid #FFEEBA; padding:15px; margin-top:20px; width:95%; text-align:left;">
+        <font face="Arial" size="2" color="#856404">
+            <b>CUIDADO:</b> O picking já foi iniciado. Se precisar de alterar produtos ou quantidades, deve estornar primeiro para o saldo voltar às prateleiras.
+        </font>
+        <br><br>
+        <a href="<?= site_url('requisicoes/estornar/'.$requisicao->id); ?>" 
+           onclick="return confirm('Deseja realmente cancelar o picking e devolver os produtos para as posições originais?')"
+           style="background: #dc3545; color: white; padding: 8px 15px; text-decoration: none; font-weight: bold; border-radius: 3px; font-family: Arial; size: 2;">
+           [X] ESTORNAR_PICKING_AND_ROLLBACK
+        </a>
+    </div>
+<?php endif; ?>
+
 </center>

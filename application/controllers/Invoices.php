@@ -10,7 +10,7 @@ class Invoices extends CI_Controller {
     }
 
     public function index() {
-        $dados['invoices'] = $this->db->get('invoices')->result();
+        $dados['invoices'] = $this->db->order_by('id', 'DESC')->get('invoices')->result();
         $dados['pagina_ativa'] = 'invoice';
         $this->load->view('v_header', $dados);
         $this->load->view('invoices/v_lista', $dados);
@@ -22,248 +22,171 @@ class Invoices extends CI_Controller {
         $this->load->view('invoices/v_novo', $dados); 
     }
 
-    //Capa da Nota
-    public function salvar() {
+    public function salvar_capa() {
         $data_emissao = $this->input->post('data_emissao');
         if ($data_emissao > date('Y-m-d')) {
-            die("<script>alert('ERRO: Data inválida!'); history.back();</script>");
+            die("<script>alert('ERRO: Data de emissão não pode ser futura!'); history.back();</script>");
         }
 
         $dados_nota = [
-            'numero_nota'      => $this->input->post('numero_nota'),
+            'numero_nota'      => preg_replace('/[^0-9]/', '', $this->input->post('numero_nota')),
             'data_emissao'     => $data_emissao,
             'fornecedor'       => $this->input->post('fornecedor'),
             'valor_total_nota' => $this->input->post('valor_total_nota'),
-            'status_nota'      => 'OPEN' 
+            'status_nota'      => 'PENDENTE' 
         ];
 
         $this->db->insert('invoices', $dados_nota);
-        $id_nota = $this->db->insert_id();
-
-        // Redireciona para adicionar os produtos um por um
-        redirect('invoices/detalhes/' . $id_nota);
+        redirect('invoices/montar_itens/' . $this->db->insert_id());
     }
 
-    // Função NOVA para adicionar item buscando do catálogo
-    // Salva os dados básicos e trava o valor alvo
-public function salvar_capa() {
-    $data_emissao = $this->input->post('data_emissao');
-    $valor_nota = $this->input->post('valor_total_nota');
-    
-    // Regra de data (não superior a hoje)
-    if ($data_emissao > date('Y-m-d')) {
-        die("<script>alert('ERRO: Data de emissão não pode ser futura!'); history.back();</script>");
-    }
+    // MÉTODO QUE ESTAVA FALTANDO OU COM NOME ERRADO
+    public function salvar_item_unitario() {
+    $id_invoice = $this->input->post('id_invoice');
+    $id_prod = $this->input->post('id_catalogo');
 
-    $dados_nota = [
-        'numero_nota'      => preg_replace('/[^0-9]/', '', $this->input->post('numero_nota')), // Apenas números
-        'data_emissao'     => $data_emissao,
-        'fornecedor'       => $this->input->post('fornecedor'),
-        'valor_total_nota' => $valor_nota,
-        'status_nota'      => 'OPEN' 
+    // Busca o valor unitário no catálogo para não precisar digitar manualmente
+    $produto = $this->db->get_where('catalogo_produtos', ['id' => $id_prod])->row();
+    $qtd = (float)$this->input->post('quantidade');
+    $v_unit = $produto->valor_unitario;
+
+    $data = [
+        'id_invoice'       => $id_invoice,
+        'id_catalogo'      => $id_prod,
+        'lote'             => strtoupper($this->input->post('lote')), // Adicionado Lote
+        'quantidade_nota'  => $qtd, // Nome da coluna na sua tabela de itens
+        'valor_unitario'   => $v_unit,
+        'valor_total_item' => $qtd * $v_unit
     ];
 
-    $this->db->insert('invoices', $dados_nota);
-    $id_nota = $this->db->insert_id();
-
-    // Redireciona para a tela de montagem de itens
-    redirect('invoices/montar_itens/' . $id_nota);
+    $this->db->insert('invoice_items', $data);
+    redirect('invoices/montar_itens/' . $id_invoice);
 }
 
-//  Tela de conferência (Adicionar Itens)
-public function montar_itens($id) {
-    $this->db->where('id', $id);
-    $dados['invoice'] = $this->db->get('invoices')->row();
+    public function montar_itens($id) {
+    // Busca a nota e já calcula o total acumulado via Model
+    $invoice = $this->Estoque_model->get_invoice_com_total($id);
+    
+    // Se a nota não existir, volta para a lista
+    if (!$invoice) {
+        redirect('invoices');
+    }
 
-    // Busca itens já inseridos com Join no catálogo
-    $this->db->select('ii.*, cp.nome_produto');
-    $this->db->from('invoice_items ii');
-    $this->db->join('catalogo_produtos cp', 'cp.id = ii.id_catalogo');
-    $this->db->where('ii.id_invoice', $id);
-    $dados['itens'] = $this->db->get()->result();
-
-    // Soma o total que já foi adicionado
-    $this->db->select_sum('valor_total_item');
-    $this->db->where('id_invoice', $id);
-    $query_soma = $this->db->get('invoice_items')->row();
-    $dados['total_acumulado'] = $query_soma->valor_total_item ?? 0;
-
-    $dados['produtos_catalogo'] = $this->db->get('catalogo_produtos')->result();
+    $dados['invoice'] = $invoice;
+    $dados['itens'] = $this->Estoque_model->get_itens_invoice($id);
+    $dados['produtos_catalogo'] = $this->Estoque_model->get_catalogo();
     $dados['pagina_ativa'] = 'invoice';
+
+    // AQUI ESTÁ A CORREÇÃO: Passando a variável que a View está pedindo
+    $dados['total_acumulado'] = $invoice->total_acumulado;
 
     $this->load->view('v_header', $dados);
     $this->load->view('invoices/v_montar_itens', $dados);
 }
 
-//  Processa a adição buscando valor no catálogo
-public function adicionar_item_unitario() {
-    $id_invoice = $this->input->post('id_invoice');
-    $id_catalogo = $this->input->post('id_catalogo');
-    $qtd = $this->input->post('quantidade');
-
-    // Busca valor unitário no catálogo
-    $produto = $this->db->get_where('catalogo_produtos', ['id' => $id_catalogo])->row();
-
-    if ($produto) {
-        $item_data = [
-            'id_invoice'         => $id_invoice,
-            'id_catalogo'        => $id_catalogo,
-            'quantidade_nota'    => $qtd,
-            'lote'               => $this->input->post('lote'),
-            'valor_unitario'     => $produto->valor_unitario, // Puxa do catálogo
-            'valor_total_item'   => ($produto->valor_unitario * $qtd),
-            'quantidade_alocada' => 0
-        ];
-        $this->db->insert('invoice_items', $item_data);
+    public function detalhes($id) {
+    // 1. Busca os dados básicos da nota
+    $invoice = $this->Estoque_model->get_invoice_com_total($id);
+    
+    if (!$invoice) {
+        redirect('invoices');
     }
-    redirect('invoices/montar_itens/' . $id_invoice);
+
+    $dados['invoice'] = $invoice;
+    $dados['itens'] = $this->Estoque_model->get_itens_invoice($id);
+    $dados['pagina_ativa'] = 'invoice';
+    $dados['total_acumulado'] = $invoice->total_acumulado;
+
+    // 2. BUSCA AS ALOCAÇÕES (O QUE JÁ ESTÁ NO ESTOQUE FÍSICO)
+    // Isso resolve o erro "Undefined variable: alocacoes_da_nota"
+    $this->db->select('e.*, cp.nome_produto');
+    $this->db->from('estoque_v2 e');
+    $this->db->join('catalogo_produtos cp', 'cp.id = e.id_catalogo');
+    $this->db->where('e.id_invoice_item IN (SELECT id FROM invoice_items WHERE id_invoice = '.$id.')');
+    $dados['alocacoes_da_nota'] = $this->db->get()->result();
+
+    $this->load->view('v_header', $dados);
+    $this->load->view('invoices/v_detalhes', $dados);
 }
 
-    public function detalhes($id) {
-        $this->db->where('id', $id);
-        $dados['invoice'] = $this->db->get('invoices')->row();
+    public function confirmar_alocacao() {
+        $id_invoice = $this->input->post('id_invoice');
+        $id_catalogo = $this->input->post('id_catalogo');
+        $lote = strtoupper($this->input->post('lote'));
+        $rua = strtoupper($this->input->post('rua'));
+        $posicao = strtoupper($this->input->post('posicao'));
 
-        //JOIN nomes de colunas
-        $this->db->select('ii.*, cp.nome_produto, cp.codigo_sku');
-        $this->db->from('invoice_items ii');
-        $this->db->join('catalogo_produtos cp', 'cp.id = ii.id_catalogo');
-        $this->db->where('ii.id_invoice', $id);
-        $dados['itens'] = $this->db->get()->result();
+        // Validação de segurança via Model
+        if ($this->Estoque_model->verificar_posicao_ocupada($rua, $posicao, $id_catalogo, $lote)) {
+            die("<script>alert('ERRO: A RUA $rua - POS $posicao já está ocupada por outro produto ou lote!'); history.back();</script>");
+        }
 
-        // Variável para conferência de valores na View
-        $this->db->select_sum('valor_total_item');
-        $this->db->where('id_invoice', $id);
-        $query_soma = $this->db->get('invoice_items')->row();
-        $dados['total_acumulado'] = $query_soma->valor_total_item ?? 0;
+        $data_estoque = [
+            'id_catalogo'     => $id_catalogo,
+            'id_invoice_item' => $this->input->post('id_invoice_item'),
+            'lote'            => $lote,
+            'quantidade'      => $this->input->post('qtd_alocar'),
+            'rua'             => $rua,
+            'posicao'         => $posicao,
+            'status_posicao'  => 'ACTIVE'
+        ];
 
-        $dados['produtos_catalogo'] = $this->db->get('catalogo_produtos')->result();
-        $dados['posicoes'] = $this->db->get('armazem_posicoes')->result();
-        $dados['pagina_ativa'] = 'invoice';
-
-        $this->load->view('v_header', $dados);
-        $this->load->view('invoices/v_detalhes', $dados);
-    }
-
-    //
-public function confirmar_alocacao() {
-    $id_invoice = $this->input->post('id_invoice');
-    $id_catalogo = $this->input->post('id_catalogo');
-    $lote = $this->input->post('lote');
-    $rua = $this->input->post('rua');
-    $posicao = $this->input->post('posicao');
-
-    // 1. VERIFICAÇÃO DE OCUPAÇÃO
-    $this->db->where('rua', $rua);
-    $this->db->where('posicao', $posicao);
-    $check = $this->db->get('estoque_v2')->row();
-
-    if ($check) {
-        // Se a posição está ocupada, verificamos se é o MESMO produto e MESMO lote
-        // Se for diferente, barramos a alocação para evitar mistura
-        if ($check->id_catalogo != $id_catalogo || $check->lote != $lote) {
-            echo "<script>
-                alert('ERRO: A RUA $rua - POS $posicao já está ocupada por outro produto ou lote diferente! Escolha outro endereço.');
-                history.back();
-            </script>";
-            return; // Interrompe a execução
+        if ($this->Estoque_model->alocar_no_estoque($data_estoque, $data_estoque['id_invoice_item'], $data_estoque['quantidade'])) {
+            redirect('invoices/detalhes/' . $id_invoice);
+        } else {
+            die("Erro crítico ao salvar alocação.");
         }
     }
 
-    // 2. SE PASSOU NA VERIFICAÇÃO, SEGUE O PROCESSO DE SALVAR
-    $data_estoque = [
-        'id_catalogo'     => $id_catalogo,
-        'id_invoice_item' => $this->input->post('id_invoice_item'),
-        'lote'            => $lote,
-        'quantidade'      => $this->input->post('qtd_alocar'),
-        'rua'             => $rua,
-        'posicao'         => $posicao,
-        'status_posicao'  => 'ACTIVE'
-    ];
+    public function deletar($id_invoice) {
+        $this->db->trans_start();
+        $itens = $this->db->get_where('invoice_items', ['id_invoice' => $id_invoice])->result();
 
-    $this->db->trans_start(); // Inicia transação para garantir integridade
+        foreach ($itens as $item) {
+            if ($this->Estoque_model->item_possui_saida($item->id)) {
+                $this->db->trans_rollback(); 
+                die("<script>alert('BLOQUEIO: Esta nota não pode ser deletada pois itens dela já saíram em requisições!'); history.back();</script>");
+            }
+            $this->db->where('id_invoice_item', $item->id)->delete('estoque_v2');
+        }
 
-    $this->db->insert('estoque_v2', $data_estoque);
-    
-    $this->db->set('quantidade_alocada', 'quantidade_alocada + ' . (float)$data_estoque['quantidade'], FALSE);
-    $this->db->where('id', $this->input->post('id_invoice_item'));
-    $this->db->update('invoice_items');
+        $this->db->where('id_invoice', $id_invoice)->delete('invoice_items');
+        $this->db->where('id', $id_invoice)->delete('invoices');
+        $this->db->trans_complete();
 
-    $this->db->trans_complete();
-
-    if ($this->db->trans_status() === FALSE) {
-        echo "<script>alert('Erro crítico ao salvar no banco de dados.'); history.back();</script>";
-    } else {
-        redirect('invoices/detalhes/' . $id_invoice);
+        redirect('invoices');
     }
-}
+
+    public function remover_item($id_item, $id_invoice) {
+        $this->db->where('id', $id_item)->delete('invoice_items');
+        redirect('invoices/montar_itens/' . $id_invoice);
+    }
 
     public function remover_alocacao($id_estoque, $id_invoice) {
-    // 1. Busca os dados da alocação antes de deletar para saber o que devolver ao saldo
+    // 1. Buscamos os dados da alocação antes de deletar
     $alocacao = $this->db->get_where('estoque_v2', ['id' => $id_estoque])->row();
 
     if ($alocacao) {
+        // 2. Verificamos se esse lote/item já teve alguma saída
+        // Se já saiu, não podemos simplesmente remover a alocação
+        if ($this->Estoque_model->item_possui_saida($alocacao->id_invoice_item)) {
+            die("<script>alert('ERRO: Não é possível remover pois este item já possui saídas registradas!'); history.back();</script>");
+        }
+
         $this->db->trans_start();
 
-        // 2. Subtrai a quantidade alocada do item da nota
+        // 3. Subtraímos a quantidade alocada lá na tabela invoice_items
         $this->db->set('quantidade_alocada', 'quantidade_alocada - ' . (float)$alocacao->quantidade, FALSE);
         $this->db->where('id', $alocacao->id_invoice_item);
         $this->db->update('invoice_items');
 
-        // 3. Remove o registo do estoque físico
-        $this->db->where('id', $id_estoque);
-        $this->db->delete('estoque_v2');
+        // 4. Removemos o registro do estoque físico (estoque_v2)
+        $this->db->where('id', $id_estoque)->delete('estoque_v2');
 
         $this->db->trans_complete();
-
-        if ($this->db->trans_status()) {
-            echo "<script>alert('Alocação removida com sucesso! O saldo retornou para conferência.');</script>";
-        } else {
-            echo "<script>alert('Erro ao processar a remoção no banco de dados.');</script>";
-        }
     }
 
     redirect('invoices/detalhes/' . $id_invoice);
-}
-
-public function remover_item($id_item, $id_invoice) {
-    // Remove o item específico
-    $this->db->where('id', $id_item);
-    $this->db->delete('invoice_items');
-    
-    // Retorna para a tela de montagem para continuar a conferência
-    redirect('invoices/montar_itens/' . $id_invoice);
-}
-
-public function deletar($id_invoice) {
-    // 1. Iniciamos uma transação para garantir que ou apaga tudo ou não apaga nada
-    $this->db->trans_start();
-
-    // 2. BUSCA OS ITENS DA NOTA PARA SABER O QUE REMOVER DO ESTOQUE
-    // Precisamos fazer isso antes de deletar os itens da nota
-    $itens_da_nota = $this->db->get_where('invoice_items', ['id_invoice' => $id_invoice])->result();
-
-    foreach ($itens_da_nota as $item) {
-        // 3. REMOVE DO ESTOQUE_V2
-        // Usamos o ID do item da nota como referência para não apagar o produto errado
-        $this->db->where('id_invoice_item', $item->id);
-        $this->db->delete('estoque_v2');
-    }
-
-    // 4. DELETA OS ITENS DA NOTA
-    $this->db->where('id_invoice', $id_invoice);
-    $this->db->delete('invoice_items');
-
-    // 5. DELETA A CAPA DA NOTA
-    $this->db->where('id', $id_invoice);
-    $this->db->delete('invoices');
-
-    $this->db->trans_complete();
-
-    if ($this->db->trans_status() === FALSE) {
-        echo "<script>alert('Erro ao deletar nota e limpar estoque.'); history.back();</script>";
-    } else {
-        redirect('invoices');
-    }
 }
 
 

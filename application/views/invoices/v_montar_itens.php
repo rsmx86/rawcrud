@@ -15,7 +15,7 @@
     </tr>
     <tr>
         <td>
-            <form action="<?= site_url('invoices/adicionar_item_unitario'); ?>" method="post" style="margin:0;">
+            <form action="<?= site_url('invoices/salvar_item_unitario'); ?>" method="post" style="margin:0;">
                 <input type="hidden" name="id_invoice" value="<?= $invoice->id; ?>">
 
                 <font size="1">PRODUTO (CATÁLOGO):</font><br>

@@ -62,7 +62,7 @@
             <table width="100%" border="0">
                 <tr>
                     <td>
-                        <button onclick="window.location.href='<?= site_url('invoices') ?>'">[ VOLTAR ]</button>
+                        <button onclick="window.location.href='<?= site_url('painel') ?>'">[ VOLTAR ]</button>
                         <button onclick="window.print()">[ IMPRIMIR RELATÓRIO ]</button>
                     </td>
                     <td align="right">

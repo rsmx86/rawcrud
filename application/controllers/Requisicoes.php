@@ -5,281 +5,205 @@ class Requisicoes extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+        // Segurança: Verifica se o usuário está logado
         if (!$this->session->userdata('id_usuario')) redirect('login');
         $this->load->model('Estoque_model');
     }
 
-    // Listagem de todas as ordens de saída
     public function index() {
-    $this->db->select('r.*, c.nome_completo as nome_cliente');
-    $this->db->from('requisicoes r');
-    $this->db->join('clientes c', 'c.id = r.id_cliente');
-    $this->db->order_by('r.id', 'DESC');
-    $dados['requisicoes'] = $this->db->get()->result();
+    // Captura os filtros da URL (GET)
+    $filtros = [
+        'lote'   => $this->input->get('lote'),
+        'cliente'=> $this->input->get('cliente'),
+        'inicio' => $this->input->get('data_inicio'),
+        'fim'    => $this->input->get('data_fim')
+    ];
 
-    //  a variável ANTES de carregar as views
-    // 
-    $dados['pagina_ativa'] = 'requisicoes/v_lista'; 
+    // O Model agora recebe os filtros
+    $dados['requisicoes'] = $this->Estoque_model->listar_requisicoes_filtradas($filtros);
+    $dados['clientes']    = $this->db->get('clientes')->result(); // Para o dropdown
+    $dados['pagina_ativa'] = 'requisicao';
 
-    // 3. Passe o array $dados também para o v_header
-    $this->load->view('v_header', $dados); 
+    $this->load->view('v_header', $dados);
     $this->load->view('requisicoes/v_lista', $dados);
 }
 
-    // Formulário de nova requisição
-    public function nova() {
-        $dados['clientes'] = $this->db->get('clientes')->result();
-        $dados['produtos'] = $this->Estoque_model->get_catalogo();
-        
-        $this->load->view('v_header');
-        $this->load->view('requisicoes/v_nova', $dados);
+    public function detalhes($id) {
+        // Busca a "capa" da requisição (Cliente e Status)
+        $requisicao = $this->Estoque_model->get_requisicao_detalhes($id);
+
+        if (!$requisicao) {
+            $this->session->set_flashdata('erro', 'Requisição não encontrada.');
+            redirect('requisicoes');
+        }
+
+        $dados['requisicao'] = $requisicao;
+        $dados['pagina_ativa'] = 'requisicao';
+
+        // Busca os itens vinculados, trazendo o nome do produto do catálogo
+        $this->db->select('ri.*, cp.nome_produto, cp.codigo_sku');
+        $this->db->from('requisicao_itens ri');
+        $this->db->join('catalogo_produtos cp', 'cp.id = ri.id_catalogo');
+        $this->db->where('ri.id_requisicao', $id);
+        $dados['itens'] = $this->db->get()->result();
+
+        $this->load->view('v_header', $dados);
+        $this->load->view('requisicoes/v_detalhes', $dados);
     }
 
-    public function detalhes($id) {
-    // Busca a requisição com o nome do cliente
-    $this->db->select('r.*, c.nome_completo as nome_cliente');
-    $this->db->from('requisicoes r');
-    $this->db->join('clientes c', 'c.id = r.id_cliente');
-    $this->db->where('r.id', $id);
-    $dados['requisicao'] = $this->db->get()->row();
+    public function estornar($id_requisicao) {
+        // Busca a requisição para validar o status antes de estornar
+        $req = $this->db->get_where('requisicoes', ['id' => $id_requisicao])->row();
+        
+        // Só permite estornar se estiver em picking ou finalizada (dependendo da sua regra)
+        if (!$req || ($req->status != 'PICKING' && $req->status != 'FINALIZADO')) {
+            die("<script>alert('ERRO: Esta requisição não pode ser estornada no status atual: " . ($req->status ?? 'N/A') . "'); history.back();</script>");
+        }
 
-    // Busca os itens que foram reservados pelo auto-picking
-    $this->db->select('ri.*, cp.nome_produto, cp.codigo_sku');
-    $this->db->from('requisicao_itens ri');
-    $this->db->join('catalogo_produtos cp', 'cp.id = ri.id_catalogo');
-    $this->db->where('ri.id_requisicao', $id);
-    $dados['itens'] = $this->db->get()->result();
+        $this->db->trans_start();
+
+        // 1. O Model devolve o saldo físico para as posições originais na estoque_v2
+        $this->Estoque_model->estornar_itens_requisicao($id_requisicao);
+
+        // 2. Voltamos o status da requisição para ABERTO para permitir nova edição
+        $this->db->where('id', $id_requisicao)->update('requisicoes', ['status' => 'ABERTO']);
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->session->set_flashdata('erro', 'Erro crítico ao processar estorno.');
+        } else {
+            $this->session->set_flashdata('sucesso', 'Estorno realizado com sucesso! Saldo devolvido ao estoque.');
+        }
+
+        redirect('requisicoes/detalhes/' . $id_requisicao);
+    }
+
+   public function nova() {
+    $dados['pagina_ativa'] = 'requisicoes/v_lista';
+    
+    $this->load->model('Cliente_model');
+    $this->load->model('Estoque_model');
+
+    // Busca os dados usando as funções que existem nos models
+    $dados['clientes'] = $this->Cliente_model->listar_clientes(); 
+    $dados['estoque'] = $this->Estoque_model->get_estoque_disponivel(); 
 
     $this->load->view('v_header', $dados);
-    $this->load->view('requisicoes/v_detalhes', $dados); // Certifique-se do nome do arquivo
-}
-
-public function reservar($id_requisicao) {
-    // Busca os itens que precisam ser reservados
-    $itens = $this->db->get_where('requisicao_itens', ['id_requisicao' => $id_requisicao])->result();
-
-    $this->db->trans_start();
-
-    foreach ($itens as $item) {
-        $qtd_falta_reservar = $item->quantidade_pedida;
-
-        // Busca as linhas de estoque disponíveis (FIFO - mais antigas primeiro)
-        $this->db->where('id_catalogo', $item->id_catalogo);
-        $this->db->where('status_posicao', 'ACTIVE');
-        $this->db->where('reserva_requisicao_id', NULL);
-        $this->db->order_by('id', 'ASC');
-        $estoque_disponivel = $this->db->get('estoque_v2')->result();
-
-        foreach ($estoque_disponivel as $linha) {
-            if ($qtd_falta_reservar <= 0) break;
-
-            // Se a linha tem mais ou igual ao que preciso, carimbo e encerro
-            // Se tem menos, carimbo o que tem e continuo procurando
-            $this->db->where('id', $linha->id);
-            $this->db->update('estoque_v2', ['reserva_requisicao_id' => $id_requisicao]);
-
-            $qtd_falta_reservar -= $linha->quantidade;
-        }
-    }
-
-    // Muda o status da requisição para VALIDADA (Fator 2 concluído)
-    $this->db->where('id', $id_requisicao);
-    $this->db->update('requisicoes', ['status_requisicao' => 'VALIDADA']);
-
-    $this->db->trans_complete();
-
-    if ($this->db->trans_status()) {
-        redirect('requisicoes/detalhes/' . $id_requisicao);
-    } else {
-        die("Erro ao processar reserva de estoque.");
-    }
+    $this->load->view('requisicoes/v_nova', $dados);
 }
 
 
-
-
-
-
-    // Salva o rascunho (Fator 1: Intenção de Saída)
-    public function salvar() {
+public function salvar() {
+    // 1. Coleta os dados básicos
     $id_cliente = $this->input->post('id_cliente');
-    $itens = $this->input->post('itens');
+    $itens = $this->input->post('itens'); // Array vindo do JavaScript
+
+    if (!$id_cliente || empty($itens)) {
+        $this->session->set_flashdata('erro', 'ERRO: Selecione um cliente e ao menos um item!');
+        redirect('requisicoes/nova');
+    }
 
     $this->db->trans_start();
 
-    // 1. Cria a Capa da Requisição
-    $dados_req = [
-        'id_cliente' => $id_cliente,
-        'data_requisicao' => date('Y-m-d H:i:s'),
-        'status_requisicao' => 'PICKING' // Status inicial
+    // 2. Cria a "Capa" da Requisição
+    $dados_requisicao = [
+        'id_cliente'       => $id_cliente,
+        'data_requisicao'  => date('Y-m-d H:i:s'),
+        'status_requisicao' => 'ABERTO',
+        'codigo_despacho'  => strtoupper(substr(uniqid(), -6)) // Gera um código de 6 dígitos
     ];
-    $this->db->insert('requisicoes', $dados_req);
+    $this->db->insert('requisicoes', $dados_requisicao);
     $id_requisicao = $this->db->insert_id();
 
-    // 2. Processa cada item e busca no estoque
-    for ($i = 0; $i < count($itens['id_catalogo']); $i++) {
-        $id_prod = $itens['id_catalogo'][$i];
-        $qtd_necessaria = $itens['quantidade'][$i];
-
-        // Busca saldo disponível no estoque para esse produto, ordenando por lote (FIFO opcional)
-        $this->db->where('id_catalogo', $id_prod);
-        $this->db->where('quantidade >', 0);
-        $this->db->order_by('lote', 'ASC'); 
-        $estoque_disponivel = $this->db->get('estoque_v2')->result();
-
-        foreach ($estoque_disponivel as $est) {
-            if ($qtd_necessaria <= 0) break;
-
-            $qtd_a_reservar = min($qtd_necessaria, $est->quantidade);
-
-            // Registra o item da requisição vinculado à posição de estoque
-            $dados_item = [
-                'id_requisicao' => $id_requisicao,
-                'id_catalogo' => $id_prod,
-                'quantidade_pedida' => $qtd_a_reservar,
-                'lote_alocado' => $est->lote,
-                'endereco_origem' => $est->rua . '-' . $est->posicao,
-                'id_estoque_v2' => $est->id // Referência para a baixa
-            ];
-            $this->db->insert('requisicao_itens', $dados_item);
-
-            $qtd_necessaria -= $qtd_a_reservar;
-        }
-
-        if ($qtd_necessaria > 0) {
-            // Opcional: Alerta se não houver estoque suficiente para o item total
-        }
+    // 3. Grava os Itens da Requisição
+    foreach ($itens['id_produto'] as $index => $id_prod) {
+        $dados_item = [
+            'id_requisicao' => $id_requisicao,
+            'id_catalogo'   => $id_prod, // ID do catálogo vinculado
+            'quantidade_pedida' => $itens['quantidade'][$index]
+        ];
+        $this->db->insert('requisicao_itens', $dados_item);
     }
 
     $this->db->trans_complete();
-    redirect('requisicoes/detalhes/' . $id_requisicao);
+
+    if ($this->db->trans_status() === FALSE) {
+        $this->session->set_flashdata('erro', 'Erro ao gravar requisição no banco.');
+        redirect('requisicoes/nova');
+    } else {
+        $this->session->set_flashdata('sucesso', 'Requisição #' . $id_requisicao . ' criada com sucesso!');
+        // Redireciona para os DETALHES para conferência
+        redirect('requisicoes/detalhes/' . $id_requisicao);
+    }
 }
 
-public function finalizar_saida() {
-    $id_req = $this->input->post('id_requisicao');
+public function confirmar_picking($id_requisicao) {
+    $this->db->select('ri.*, cp.nome_produto');
+    $this->db->from('requisicao_itens ri');
+    $this->db->join('catalogo_produtos cp', 'cp.id = ri.id_catalogo');
+    $this->db->where('ri.id_requisicao', $id_requisicao);
+    $itens_pedidos = $this->db->get()->result();
 
     $this->db->trans_start();
 
-    // 1. Busca os itens da requisição para saber o que tirar do estoque
-    $this->db->where('id_requisicao', $id_req);
-    $itens = $this->db->get('requisicao_itens')->result();
+    foreach ($itens_pedidos as $item) {
+        $quantidade_falta = (float)$item->quantidade_pedida;
 
-    foreach ($itens as $item) {
-        // 2. Subtrai a quantidade do registro específico no estoque_v2
-        $this->db->set('quantidade', 'quantidade - ' . (float)$item->quantidade_pedida, FALSE);
-        $this->db->where('id', $item->id_estoque_v2);
-        $this->db->update('estoque_v2');
+        // 1. Busca todas as posições que têm esse produto, ordenando por lote (mais antigo primeiro)
+        $posicoes = $this->db->where('id_catalogo', $item->id_catalogo)
+                             ->where('quantidade >', 0)
+                             ->order_by('lote', 'ASC')
+                             ->get('estoque_v2')
+                             ->result();
 
-        // 3. Limpeza: Se a quantidade chegou a zero, removemos o registro do estoque
-        $this->db->where('id', $item->id_estoque_v2);
-        $this->db->where('quantidade <=', 0);
-        $this->db->delete('estoque_v2');
+        foreach ($posicoes as $pos) {
+            if ($quantidade_falta <= 0) break;
+
+            $quantidade_retirar = min($quantidade_falta, $pos->quantidade);
+            $nova_qtd_posicao = (float)$pos->quantidade - (float)$quantidade_retirar;
+
+            // 2. Deduz da posição atual ou remove se zerar
+            if ($nova_qtd_posicao <= 0) {
+                // Se zerou, deleta o registro para liberar a posição no mapa de estoque
+                $this->db->where('id', $pos->id);
+                $this->db->delete('estoque_v2');
+            } else {
+                // Se ainda sobrou saldo, apenas atualiza a quantidade
+                $this->db->where('id', $pos->id);
+                $this->db->update('estoque_v2', ['quantidade' => $nova_qtd_posicao]);
+            }
+
+            // 3. Registra o rastro do lote no item da requisição
+            $this->db->where('id', $item->id);
+            $this->db->update('requisicao_itens', [
+                'id_estoque_v2' => $pos->id, 
+                'lote_alocado'  => $pos->lote
+            ]);
+
+            $quantidade_falta -= $quantidade_retirar;
+        }
+
+        // 4. Se depois de percorrer tudo ainda faltar quantidade, cancela
+        if ($quantidade_falta > 0) {
+            $this->db->trans_rollback();
+            die("ERRO: Saldo insuficiente total para " . $item->nome_produto . ". Faltam: " . $quantidade_falta);
+        }
     }
 
-    // 4. Muda o status da Requisição para FINALIZADA
-    $this->db->where('id', $id_req);
+    // 5. Finaliza a requisição
+    $this->db->where('id', $id_requisicao);
     $this->db->update('requisicoes', ['status_requisicao' => 'FINALIZADA']);
 
     $this->db->trans_complete();
 
-    if ($this->db->trans_status()) {
-        redirect('requisicoes');
-    } else {
-        die("Erro ao processar a baixa de estoque.");
-    }
-}
-
-public function atualizar() {
-    $id_req = $this->input->post('id_requisicao');
-    $itens = $this->input->post('itens');
-
-    $this->db->trans_start();
-
-    // 1. Removemos os itens antigos da requisição para refazer o cálculo de picking
-    $this->db->where('id_requisicao', $id_req);
-    $this->db->delete('requisicao_itens');
-
-    // 2. Repetimos a lógica de Auto-Picking (mesma que usamos no salvar)
-    for ($i = 0; $i < count($itens['id_catalogo']); $i++) {
-        $id_prod = $itens['id_catalogo'][$i];
-        $qtd_necessaria = $itens['quantidade'][$i];
-
-        // Busca saldo no estoque
-        $this->db->where('id_catalogo', $id_prod);
-        $this->db->where('quantidade >', 0);
-        $this->db->order_by('lote', 'ASC'); 
-        $estoque = $this->db->get('estoque_v2')->result();
-
-        foreach ($estoque as $est) {
-            if ($qtd_necessaria <= 0) break;
-            $qtd_a_reservar = min($qtd_necessaria, $est->quantidade);
-
-            $this->db->insert('requisicao_itens', [
-                'id_requisicao' => $id_req,
-                'id_catalogo' => $id_prod,
-                'quantidade_pedida' => $qtd_a_reservar,
-                'lote_alocado' => $est->lote,
-                'endereco_origem' => $est->rua . '-' . $est->posicao,
-                'id_estoque_v2' => $est->id
-            ]);
-            $qtd_necessaria -= $qtd_a_reservar;
-        }
+    if ($this->db->trans_status() === FALSE) {
+        die("Erro crítico de banco de dados ao processar transação.");
     }
 
-    $this->db->trans_complete();
-    redirect('requisicoes/detalhes/' . $id_req);
+    $this->session->set_flashdata('sucesso', 'Picking confirmado! Quantidades deduzidas de múltiplas posições.');
+    redirect('requisicoes/detalhes/' . $id_requisicao);
 }
 
-
-
-public function editar($id) {
-    // 1. Busca os dados básicos da requisição
-    $this->db->select('r.*, c.nome_completo as nome_cliente');
-    $this->db->from('requisicoes r');
-    $this->db->join('clientes c', 'c.id = r.id_cliente');
-    $this->db->where('r.id', $id);
-    $req = $this->db->get()->row();
-
-    // Segurança: Não permite editar se já estiver finalizada
-    if (!$req || $req->status_requisicao == 'FINALIZADA') {
-        redirect('requisicoes');
-    }
-
-    $dados['requisicao'] = $req;
-
-    // 2. Busca os itens atuais (agrupados por produto para facilitar a edição)
-    // Note que usamos GROUP BY porque o auto-picking pode ter quebrado o mesmo item em vários lotes/endereços
-    $this->db->select('ri.id_catalogo, cp.nome_produto, cp.codigo_sku, SUM(ri.quantidade_pedida) as quantidade_pedida');
-    $this->db->from('requisicao_itens ri');
-    $this->db->join('catalogo_produtos cp', 'cp.id = ri.id_catalogo');
-    $this->db->where('ri.id_requisicao', $id);
-    $this->db->group_by('ri.id_catalogo');
-    $dados['itens_atuais'] = $this->db->get()->result();
-
-    // 3. Dados auxiliares para os selects da tela
-    $dados['produtos'] = $this->Estoque_model->get_catalogo();
-    
-    $this->load->view('v_header');
-    $this->load->view('requisicoes/v_editar', $dados);
-}
-
-// Função para o botão DEL (Cancela a requisição e limpa os itens)
-public function deletar($id) {
-    $this->db->where('id', $id);
-    $req = $this->db->get('requisicoes')->row();
-
-    // Só deleta se não estiver finalizada (segurança de estoque)
-    if ($req && $req->status_requisicao !== 'FINALIZADA') {
-        $this->db->trans_start();
-        $this->db->where('id_requisicao', $id);
-        $this->db->delete('requisicao_itens');
-        
-        $this->db->where('id', $id);
-        $this->db->delete('requisicoes');
-        $this->db->trans_complete();
-    }
-
-    redirect('requisicoes');
-}
 
 }

@@ -20,4 +20,9 @@ class Cliente_model extends CI_Model {
         $this->db->order_by('nome_completo', 'ASC');
         return $this->db->get('clientes')->result();
     }
+
+    public function listar_clientes() {
+    return $this->db->get('clientes')->result(); // Confirme se o nome da sua tabela é 'clientes'
+}
+
 }

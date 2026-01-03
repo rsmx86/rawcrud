@@ -65,6 +65,18 @@
             </table>
             <?php endif; ?>
 
+            <?php if($ativa == 'devolucao'): ?>
+<table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
+    <tr>
+        <td>
+            <font face="MS Sans Serif, Arial" size="2">
+                <b><u>R</u>everse_Logistics</b>
+            </font>
+        </td>
+    </tr>
+</table>
+<?php endif; ?>
+
 
             <?php if($ativa == 'requisicoes/v_lista') : ?>
 <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">

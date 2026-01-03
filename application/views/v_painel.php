@@ -57,7 +57,7 @@
                                         </tr>
                                     </table>
 
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 12px;">
                                         <tr>
                                             <td width="48%">
                                                 <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url('estoque'); ?>'">
@@ -73,7 +73,16 @@
                                         </tr>
                                     </table>
 
-                                    <div style="margin-top:12px;">
+                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url('devolucao'); ?>'">
+                                        <tr>
+                                            <td>
+                                                <font face="Arial Black" size="3" color="#808000">🔄 REVERSE_LOGISTICS [ESTORNO]</font><br>
+                                                <font face="Arial" size="1">Devolução de mercadoria e restauração de saldo.</font>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <div>
                                         <?php if(in_array($user_nivel, ['Garage Chief', 'ADM'])): ?>
                                             <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;">
                                                 <tr><td><font face="Arial Black" size="3" color="#000000">📈 SYSTEM_REPORTS</font></td></tr>
@@ -92,15 +101,15 @@
                                             <td>
                                                 <table width="100%" border="0" cellspacing="0" cellpadding="10" bgcolor="#000000">
                                                     <tr>
-                                                        <td height="180" valign="top">
-                                                            <font face="Courier New" size="2" color="#00FF00">
+                                                        <td height="330" valign="top"> <font face="Courier New" size="2" color="#00FF00">
                                                                 [SYSTEM_LOG]<br>
                                                                 > session_init... OK<br>
                                                                 > auth_level: <?= $user_nivel; ?><br>
                                                                 > db_link: established<br>
                                                                 > status: AWAITING_CMD_<br>
                                                                 > station_id: G90-TK-01<br>
-                                                                > loading_modules... DONE
+                                                                > loading_modules... DONE<br>
+                                                                > rev_logistics: active
                                                             </font>
                                                         </td>
                                                     </tr>
