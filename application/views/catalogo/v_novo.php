@@ -54,7 +54,7 @@
                     <tr>
                         <td>
                             <font face="Arial" size="1"><b>VALOR_UNITÁRIO (BRL):</b></font><br>
-                            <input type="number" step="0.01" name="valor_unitario" placeholder="0.00" style="width:95%; text-align:right;">
+                            <input type="number" step="0.01" min="0" required  name="valor_unitario" placeholder="0.00" style="width:95%; text-align:right;">
                         </td>
                         <td bgcolor="#D6D2C4" align="center">
                              <font face="Arial" size="1" color="#404040">Preencha todos os campos<br>antes de processar.</font>
@@ -71,7 +71,7 @@
                         </td>
                         <td align="right">
                             <button type="submit" style="width:120px; height:30px;"><b>Finish_Next ></b></button>
-                            <button type="reset"><b>Cancel</b></button>
+                            <button type="reset"><b>Clean</b></button>
                         </td>
                     </tr>
                 </table>

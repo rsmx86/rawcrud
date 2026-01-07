@@ -39,6 +39,8 @@ class Estoque_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    
+
 
     public function get_itens_devolucao_por_codigo($codigo) {
     $this->db->select('ri.*, cp.nome_produto, cp.codigo_sku, r.codigo_despacho');
@@ -163,6 +165,33 @@ class Estoque_model extends CI_Model {
     return $this->db->get()->result();
 }
 
+   public function registrar_log($acao, $tabela = '', $detalhes = '') {
+    $dados = [
+        'id_usuario'     => $this->session->userdata('id_usuario'),
+        'usuario_nome'   => $this->session->userdata('nome_usuario'), // Supondo que você guarda o nome na sessão
+        'acao'           => $acao,
+        'tabela_afetada' => $tabela,
+        'detalhes'       => $detalhes
+    ];
+    return $this->db->insert('logs_sistema', $dados);
+}
+
+    public function salvar_produto($dados) {
+    // Insere o produto na tabela 'produtos' (ou o nome que você usa)
+    if ($this->db->insert('catalogo_produtos', $dados)) {
+        
+        // APROVEITE E JÁ DEIXE O LOG AQUI DENTRO DO MODEL!
+        // Assim, toda vez que salvar um produto, o log é automático.
+        $this->registrar_log(
+            "Cadastrou novo produto", 
+            "produtos", 
+            "Produto: " . $dados['nome'] // 
+        );
+        
+        return true;
+    }
+    return false;
+}
 
 
 }

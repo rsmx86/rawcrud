@@ -40,7 +40,7 @@ class Clientes extends CI_Controller {
     public function salvar() {
         $data = $this->input->post();
         
-        // Normalização de Checkboxes (Booleano)
+        // Normalização de Checkboxes (Booleano) os ticks
         $data['uso_drift']      = isset($data['uso_drift']) ? 1 : 0;
         $data['uso_track_day']  = isset($data['uso_track_day']) ? 1 : 0;
         $data['uso_rua']        = isset($data['uso_rua']) ? 1 : 0;
@@ -81,7 +81,7 @@ class Clientes extends CI_Controller {
         }
 
         $this->load->view('v_header', $dados);
-        $this->load->view('v_clientes_novo', $dados); // Reaproveita v_clientes_novo para edição
+        $this->load->view('v_clientes_novo', $dados); // 
     }
 
     /**
@@ -115,4 +115,17 @@ class Clientes extends CI_Controller {
             echo "<script>alert('Error deleting record.'); history.back();</script>";
         }
     }
+
+    public function salvar_cliente() {
+    if ($this->db->insert('clientes', $dados)) {
+        $this->Estoque_model->registrar_log(
+            "Cadastrou novo cliente", 
+            "clientes", 
+            "Cliente: " . $this->input->post('razao_social')
+        );
+    }
+}
+
+
+
 }

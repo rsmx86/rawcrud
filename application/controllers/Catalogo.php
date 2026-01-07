@@ -24,19 +24,28 @@ class Catalogo extends CI_Controller {
     }
 
     public function salvar() {
-        $data = [
-            'codigo_sku'   => strtoupper($this->input->post('sku')),
-            'nome_produto' => strtoupper($this->input->post('nome')),
-            'fabricante'   => strtoupper($this->input->post('fabricante')),
-            'unidade_medida' => $this->input->post('unidade')
-        ];
+    $data = [
+        'codigo_sku'     => strtoupper($this->input->post('codigo_sku')),
+        'nome_produto'   => strtoupper($this->input->post('nome_produto')),
+        'fabricante'     => strtoupper($this->input->post('fabricante')),
+        'unidade_medida' => $this->input->post('unidade_medida'),
+        'valor_unitario' => $this->input->post('valor_unitario')
+    ];
 
-        if ($this->Estoque_model->salvar_produto($data)) {
-            redirect('catalogo');
-        } else {
-            die("Erro ao salvar: SKU possivelmente duplicado.");
-        }
+    // Validação simples para não salvar vazio
+    if (empty($data['codigo_sku']) || empty($data['nome_produto'])) {
+        die("Erro: SKU e Nome são obrigatórios.");
     }
+
+    if ($this->Estoque_model->salvar_produto($data)) {
+        // 
+        $this->Estoque_model->registrar_log("Criou produto", "catalogo_produtos", $data['nome_produto']);
+        
+        redirect('catalogo');
+    } else {
+        die("Erro ao salvar no banco de dados.");
+    }
+}
 
     public function editar($id) {
         $this->db->where('id', $id);

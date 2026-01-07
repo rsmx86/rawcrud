@@ -22,7 +22,7 @@ class Cliente_model extends CI_Model {
     }
 
     public function listar_clientes() {
-    return $this->db->get('clientes')->result(); // Confirme se o nome da sua tabela é 'clientes'
+    return $this->db->get('clientes')->result(); // C
 }
 
 }

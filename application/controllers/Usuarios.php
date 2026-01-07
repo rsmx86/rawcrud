@@ -138,4 +138,21 @@ class Usuarios extends CI_Controller {
         $this->load->view('v_header', $dados);
         $this->load->view('v_usuarios_editar', $dados);
     }
+    
+    public function salvar_usuario() {
+    if ($this->db->insert('usuarios', $dados_novos)) {
+        // REGISTRA O LOG
+        $this->Estoque_model->registrar_log(
+            "Criou um novo usuário", 
+            "usuarios", 
+            "Nome: " . $this->input->post('nome')
+        );
+        
+        redirect('usuarios');
+    }
+}
+
+
+
+
 }
