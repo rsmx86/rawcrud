@@ -40,12 +40,12 @@ class Invoices extends CI_Controller {
         redirect('invoices/montar_itens/' . $this->db->insert_id());
     }
 
-    // MÉTODO QUE ESTAVA FALTANDO OU COM NOME ERRADO
+    
     public function salvar_item_unitario() {
     $id_invoice = $this->input->post('id_invoice');
     $id_prod = $this->input->post('id_catalogo');
 
-    // Busca o valor unitário no catálogo para não precisar digitar manualmente
+    
     $produto = $this->db->get_where('catalogo_produtos', ['id' => $id_prod])->row();
     $qtd = (float)$this->input->post('quantidade');
     $v_unit = $produto->valor_unitario;
@@ -53,8 +53,8 @@ class Invoices extends CI_Controller {
     $data = [
         'id_invoice'       => $id_invoice,
         'id_catalogo'      => $id_prod,
-        'lote'             => strtoupper($this->input->post('lote')), // Adicionado Lote
-        'quantidade_nota'  => $qtd, // Nome da coluna na sua tabela de itens
+        'lote'             => strtoupper($this->input->post('lote')), 
+        'quantidade_nota'  => $qtd, 
         'valor_unitario'   => $v_unit,
         'valor_total_item' => $qtd * $v_unit
     ];
@@ -64,10 +64,10 @@ class Invoices extends CI_Controller {
 }
 
     public function montar_itens($id) {
-    // Busca a nota e já calcula o total acumulado via Model
+    
     $invoice = $this->Estoque_model->get_invoice_com_total($id);
     
-    // Se a nota não existir, volta para a lista
+    
     if (!$invoice) {
         redirect('invoices');
     }
@@ -77,7 +77,7 @@ class Invoices extends CI_Controller {
     $dados['produtos_catalogo'] = $this->Estoque_model->get_catalogo();
     $dados['pagina_ativa'] = 'invoice';
 
-    // AQUI ESTÁ A CORREÇÃO: Passando a variável que a View está pedindo
+    
     $dados['total_acumulado'] = $invoice->total_acumulado;
 
     $this->load->view('v_header', $dados);
@@ -85,7 +85,7 @@ class Invoices extends CI_Controller {
 }
 
     public function detalhes($id) {
-    // 1. Busca os dados básicos da nota
+    
     $invoice = $this->Estoque_model->get_invoice_com_total($id);
     
     if (!$invoice) {
@@ -97,8 +97,7 @@ class Invoices extends CI_Controller {
     $dados['pagina_ativa'] = 'invoice';
     $dados['total_acumulado'] = $invoice->total_acumulado;
 
-    // 2. BUSCA AS ALOCAÇÕES (O QUE JÁ ESTÁ NO ESTOQUE FÍSICO)
-    // Isso resolve o erro "Undefined variable: alocacoes_da_nota"
+    
     $this->db->select('e.*, cp.nome_produto');
     $this->db->from('estoque_v2 e');
     $this->db->join('catalogo_produtos cp', 'cp.id = e.id_catalogo');
@@ -116,7 +115,7 @@ class Invoices extends CI_Controller {
         $rua = strtoupper($this->input->post('rua'));
         $posicao = strtoupper($this->input->post('posicao'));
 
-        // Validação de segurança via Model
+        
         if ($this->Estoque_model->verificar_posicao_ocupada($rua, $posicao, $id_catalogo, $lote)) {
             die("<script>alert('ERRO: A RUA $rua - POS $posicao já está ocupada por outro produto ou lote!'); history.back();</script>");
         }
@@ -163,24 +162,23 @@ class Invoices extends CI_Controller {
     }
 
     public function remover_alocacao($id_estoque, $id_invoice) {
-    // 1. Buscamos os dados da alocação antes de deletar
+    
     $alocacao = $this->db->get_where('estoque_v2', ['id' => $id_estoque])->row();
 
     if ($alocacao) {
-        // 2. Verificamos se esse lote/item já teve alguma saída
-        // Se já saiu, não podemos simplesmente remover a alocação
+        
         if ($this->Estoque_model->item_possui_saida($alocacao->id_invoice_item)) {
             die("<script>alert('ERRO: Não é possível remover pois este item já possui saídas registradas!'); history.back();</script>");
         }
 
         $this->db->trans_start();
 
-        // 3. Subtraímos a quantidade alocada lá na tabela invoice_items
+        
         $this->db->set('quantidade_alocada', 'quantidade_alocada - ' . (float)$alocacao->quantidade, FALSE);
         $this->db->where('id', $alocacao->id_invoice_item);
         $this->db->update('invoice_items');
 
-        // 4. Removemos o registro do estoque físico (estoque_v2)
+        
         $this->db->where('id', $id_estoque)->delete('estoque_v2');
 
         $this->db->trans_complete();

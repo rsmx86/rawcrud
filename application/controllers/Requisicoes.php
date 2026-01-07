@@ -5,13 +5,13 @@ class Requisicoes extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        // Segurança: Verifica se o usuário está logado
+        
         if (!$this->session->userdata('id_usuario')) redirect('login');
         $this->load->model('Estoque_model');
     }
 
     public function index() {
-    // Captura os filtros da URL (GET)
+    
     $filtros = [
         'lote'   => $this->input->get('lote'),
         'cliente'=> $this->input->get('cliente'),
@@ -21,7 +21,7 @@ class Requisicoes extends CI_Controller {
 
     // O Model agora recebe os filtros
     $dados['requisicoes'] = $this->Estoque_model->listar_requisicoes_filtradas($filtros);
-    $dados['clientes']    = $this->db->get('clientes')->result(); // Para o dropdown
+    $dados['clientes']    = $this->db->get('clientes')->result();
     $dados['pagina_ativa'] = 'requisicao';
 
     $this->load->view('v_header', $dados);
@@ -29,7 +29,7 @@ class Requisicoes extends CI_Controller {
 }
 
     public function detalhes($id) {
-        // Busca a "capa" da requisição (Cliente e Status)
+        // Busca header da requisição (Cliente e Status)
         $requisicao = $this->Estoque_model->get_requisicao_detalhes($id);
 
         if (!$requisicao) {
@@ -55,7 +55,7 @@ class Requisicoes extends CI_Controller {
         // Busca a requisição para validar o status antes de estornar
         $req = $this->db->get_where('requisicoes', ['id' => $id_requisicao])->row();
         
-        // Só permite estornar se estiver em picking ou finalizada (dependendo da sua regra)
+        // Só permite estornar se estiver em picking ou finalizada 
         if (!$req || ($req->status != 'PICKING' && $req->status != 'FINALIZADO')) {
             die("<script>alert('ERRO: Esta requisição não pode ser estornada no status atual: " . ($req->status ?? 'N/A') . "'); history.back();</script>");
         }
@@ -204,6 +204,6 @@ public function confirmar_picking($id_requisicao) {
     $this->session->set_flashdata('sucesso', 'Picking confirmado! Quantidades deduzidas de múltiplas posições.');
     redirect('requisicoes/detalhes/' . $id_requisicao);
 }
-
+//nao aguento mais, estou com sono
 
 }

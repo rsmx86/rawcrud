@@ -168,7 +168,7 @@ class Estoque_model extends CI_Model {
    public function registrar_log($acao, $tabela = '', $detalhes = '') {
     $dados = [
         'id_usuario'     => $this->session->userdata('id_usuario'),
-        'usuario_nome'   => $this->session->userdata('nome_usuario'), // Supondo que você guarda o nome na sessão
+        'usuario_nome'   => $this->session->userdata('nome_usuario'),
         'acao'           => $acao,
         'tabela_afetada' => $tabela,
         'detalhes'       => $detalhes
@@ -176,22 +176,48 @@ class Estoque_model extends CI_Model {
     return $this->db->insert('logs_sistema', $dados);
 }
 
-    public function salvar_produto($dados) {
-    // Insere o produto na tabela 'produtos' (ou o nome que você usa)
+   public function salvar_produto($dados) {
+        $this->db->where('codigo_sku', $dados['codigo_sku']);
+    $existe = $this->db->get('catalogo_produtos')->num_rows();
+
+    if ($existe > 0) {
+        // Se o SKU já existe, eu retorno "false" sem o insert
+        return false;
+    }
+
+    // 
     if ($this->db->insert('catalogo_produtos', $dados)) {
         
-        // APROVEITE E JÁ DEIXE O LOG AQUI DENTRO DO MODEL!
-        // Assim, toda vez que salvar um produto, o log é automático.
+        //a
         $this->registrar_log(
             "Cadastrou novo produto", 
-            "produtos", 
-            "Produto: " . $dados['nome'] // 
+            "catalogo_produtos", 
+            "SKU: " . $dados['codigo_sku'] . " - Item: " . $dados['nome_produto']
         );
         
         return true;
     }
+
     return false;
 }
+
+    public function atualizar_produto($id, $dados) {
+    $this->db->where('codigo_sku', $dados['codigo_sku']);
+    $this->db->where('id !=', $id);
+    $existe = $this->db->get('catalogo_produtos')->num_rows();
+
+    if ($existe > 0) {
+        return false;
+    }
+
+    $this->db->where('id', $id);
+    if ($this->db->update('catalogo_produtos', $dados)) {
+        $this->registrar_log("Editou produto", "catalogo_produtos", "ID: $id | Novo SKU: " . $dados['codigo_sku']);
+        return true;
+    }
+    return false;
+}
+    
 
 
 }

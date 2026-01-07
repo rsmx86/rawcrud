@@ -24,26 +24,42 @@ class Catalogo extends CI_Controller {
     }
 
     public function salvar() {
-    $data = [
-        'codigo_sku'     => strtoupper($this->input->post('codigo_sku')),
-        'nome_produto'   => strtoupper($this->input->post('nome_produto')),
-        'fabricante'     => strtoupper($this->input->post('fabricante')),
-        'unidade_medida' => $this->input->post('unidade_medida'),
-        'valor_unitario' => $this->input->post('valor_unitario')
-    ];
+    $sku   = strtoupper($this->input->post('codigo_sku'));
+    $nome  = strtoupper($this->input->post('nome_produto'));
+    $valor = $this->input->post('valor_unitario'); 
 
-    // Validação simples para não salvar vazio
-    if (empty($data['codigo_sku']) || empty($data['nome_produto'])) {
-        die("Erro: SKU e Nome são obrigatórios.");
+    
+    if (empty($sku) || empty($nome)) {
+        die("Erro: Você precisa preencher o SKU e o Nome do produto!");
     }
 
+    
+    if ($valor < 0) {
+        die("Erro: O valor do produto não pode ser menor que zero.");
+    }
+
+    
+    $data = [
+        'codigo_sku'     => $sku,
+        'nome_produto'   => $nome,
+        'fabricante'     => strtoupper($this->input->post('fabricante')),
+        'unidade_medida' => $this->input->post('unidade_medida'),
+        'valor_unitario' => $valor 
+    ];
+
+   
     if ($this->Estoque_model->salvar_produto($data)) {
-        // 
-        $this->Estoque_model->registrar_log("Criou produto", "catalogo_produtos", $data['nome_produto']);
+        
+        
+        $this->Estoque_model->registrar_log("Criou produto", "catalogo_produtos", "SKU: $sku | Item: $nome");
         
         redirect('catalogo');
+
     } else {
-        die("Erro ao salvar no banco de dados.");
+        
+        echo "<h3>Ops! Esse SKU já existe.</h3>";
+        echo "O código <b>$sku</b> já está cadastrado em outro item.";
+        echo "<br><br><a href='javascript:history.back()'>Voltar e corrigir o código</a>";
     }
 }
 
@@ -63,16 +79,16 @@ class Catalogo extends CI_Controller {
 
 
     public function excluir($id) {
-    // 1. Verifica se o ID foi passado para evitar erros
+    
     if ($id) {
-        // 2. Define qual registro será apagado
+        
         $this->db->where('id', $id);
         
-        // 3. Executa a exclusão na tabela correta
+        
         $this->db->delete('catalogo_produtos');
     }
 
-    // 4. Redireciona de volta para a lista com a página atualizada
+    
     redirect('catalogo');
 }
 
@@ -82,17 +98,21 @@ class Catalogo extends CI_Controller {
     $id = $this->input->post('id');
     
     $data = [
-        'codigo_sku'     => $this->input->post('codigo_sku'),
-        'nome_produto'   => $this->input->post('nome_produto'),
-        'fabricante'     => $this->input->post('fabricante'),
+        'codigo_sku'     => strtoupper($this->input->post('codigo_sku')),
+        'nome_produto'   => strtoupper($this->input->post('nome_produto')),
+        'fabricante'     => strtoupper($this->input->post('fabricante')),
         'unidade_medida' => $this->input->post('unidade_medida'),
         'valor_unitario' => $this->input->post('valor_unitario')
     ];
 
-    $this->db->where('id', $id);
-    $this->db->update('catalogo_produtos', $data);
-    
-    redirect('catalogo');
+    if ($this->Estoque_model->atualizar_produto($id, $data)) {
+        redirect('catalogo');
+    } else {
+        
+        $sku_erro = $data['codigo_sku'];
+        $this->session->set_flashdata('erro_sku', "O código $sku_erro já está em uso!");
+        redirect('catalogo'); 
+    }
 }
 
 

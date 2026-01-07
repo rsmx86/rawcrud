@@ -77,3 +77,28 @@
     </table>
 </form>
 </center>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Popup de Erro (SKU Duplicado ou campos vazios)
+        <?php if($this->session->flashdata('erro_sku')): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Atenção!',
+                text: '<?php echo $this->session->flashdata('erro_sku'); ?>',
+                confirmButtonColor: '#d33'
+            });
+        <?php endif; ?>
+
+        // Popup de Sucesso
+        <?php if($this->session->flashdata('sucesso')): ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: '<?php echo $this->session->flashdata('sucesso'); ?>',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        <?php endif; ?>
+    </script>
