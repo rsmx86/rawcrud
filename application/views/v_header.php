@@ -13,8 +13,12 @@
         </td>
         <td align="right">
             <font face="Arial" size="2" color="#FFFFFF">
-                <b>USER:</b> <?php echo strtoupper($this->session->userdata('nome')); ?> &nbsp;
-                <b>RANK:</b> [<?php echo strtoupper($this->session->userdata('nivel')); ?>] &nbsp;
+                <b>USER:</b> <?php echo strtoupper(
+                    $this->session->userdata("nome")
+                ); ?> &nbsp;
+                <b>RANK:</b> [<?php echo strtoupper(
+                    $this->session->userdata("nivel")
+                ); ?>] &nbsp;
             </font>
         </td>
     </tr>
@@ -24,21 +28,30 @@
     <tr>
         <td height="34" valign="bottom">
             &nbsp;
-            <?php $ativa = (isset($pagina_ativa)) ? $pagina_ativa : 'dashboard'; ?>
+            <?php $ativa = isset($pagina_ativa)
+                ? $pagina_ativa
+                : "dashboard"; ?>
 
-            <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="<?= ($ativa == 'dashboard') ? '#D6D2C4' : '#C0C0C0'; ?>">
+            <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="<?= $ativa ==
+            "dashboard"
+                ? "#D6D2C4"
+                : "#C0C0C0" ?>">
                 <tr>
                     <td>
-                        <a href="<?= site_url('painel'); ?>" style="text-decoration:none;">
+                        <a href="<?= site_url(
+                            "painel"
+                        ) ?>" style="text-decoration:none;">
                             <font face="MS Sans Serif, Arial" size="2">
-                                <b><?= ($ativa == 'dashboard') ? '<u>M</u>ain_Panel' : 'Main_Panel'; ?></b>
+                                <b><?= $ativa == "dashboard"
+                                    ? "<u>M</u>ain_Panel"
+                                    : "Main_Panel" ?></b>
                             </font>
                         </a>
                     </td>
                 </tr>
             </table>
 
-            <?php if($ativa == 'clientes'): ?>
+            <?php if ($ativa == "clientes"): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>C</u>lients_DB</b></font></td></tr>
             </table>
@@ -47,25 +60,34 @@
 
 
 
-            <?php if($ativa == 'usuarios'): ?>
+            <?php if ($ativa == "usuarios"): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>O</u>perators_DB</b></font></td></tr>
             </table>
             <?php endif; ?>
 
-            <?php if($ativa == 'estoque' || $ativa == 'inventory'): ?>
+            <?php if ($ativa == "estoque" || $ativa == "inventory"): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>S</u>tock_Inventory</b></font></td></tr>
             </table>
             <?php endif; ?>
 
-                 <?php if($ativa == 'catalogo/v_lista' || $ativa =='catalogo/v_novo' ): ?>
+            <?php if ($ativa == "requisicao"): ?>
+            <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
+                <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>R</u>equisicoes</b></font></td></tr>
+            </table>
+            <?php endif; ?>
+
+                 <?php if (
+                     $ativa == "catalogo/v_lista" ||
+                     $ativa == "catalogo/v_novo"
+                 ): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>C</u>atalog</b></font></td></tr>
             </table>
             <?php endif; ?>
 
-            <?php if($ativa == 'devolucao'): ?>
+            <?php if ($ativa == "devolucao"): ?>
 <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
     <tr>
         <td>
@@ -78,13 +100,13 @@
 <?php endif; ?>
 
 
-            <?php if($ativa == 'requisicoes/v_lista') : ?>
+            <?php if ($ativa == "requisicoes/v_lista"): ?>
 <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
     <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>D</u>ispatch_Manager</b></font></td></tr>
 </table>
 <?php endif; ?>
 
-            <?php if($ativa == 'invoice'): ?>
+            <?php if ($ativa == "invoice"): ?>
             <table border="2" cellspacing="0" cellpadding="6" align="left" bordercolorlight="#FFFFFF" bordercolordark="#808080" bgcolor="#D6D2C4">
                 <tr><td><font face="MS Sans Serif, Arial" size="2"><b><u>I</u>nvoice_Entry</b></font></td></tr>
             </table>
@@ -93,7 +115,9 @@
         </td>
         <td align="right" valign="middle">
             <font face="Arial" size="2">
-                <a href="<?= site_url('login/sair'); ?>" style="text-decoration:none;"><b>[ LOGOFF ]</b></a>&nbsp;
+                <a href="<?= site_url(
+                    "login/sair"
+                ) ?>" style="text-decoration:none;"><b>[ LOGOFF ]</b></a>&nbsp;
             </font>
         </td>
     </tr>

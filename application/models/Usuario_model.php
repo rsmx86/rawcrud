@@ -1,14 +1,15 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined("BASEPATH") or exit("No direct script access allowed");
 
 /**
  * Gestão de Operadores e Autenticação
  */
-class Usuario_model extends CI_Model {
-
-    public function logar($email, $senha) {
-        $this->db->where('email', $email);
-        $query = $this->db->get('usuarios');
+class Usuario_model extends CI_Model
+{
+    public function logar($email, $senha)
+    {
+        $this->db->where("email", $email);
+        $query = $this->db->get("usuarios");
 
         if ($query->num_rows() == 1) {
             $usuario = $query->row();
@@ -20,27 +21,34 @@ class Usuario_model extends CI_Model {
         return false;
     }
 
-    public function listar_todos() {
+    public function listar_todos()
+    {
         // Ordenação por hierarquia do WMS
-        $this->db->order_by("FIELD(nivel, 'Garage Chief', 'Chief Mechanic', 'Mechanic', 'ADM')");
-        return $this->db->get('usuarios')->result();
+        $this->db->order_by(
+            "FIELD(nivel, 'Garage Chief', 'Chief Mechanic', 'Mechanic', 'ADM')"
+        );
+        return $this->db->get("usuarios")->result();
     }
 
-    public function inserir($dados) {
-        return $this->db->insert('usuarios', $dados);
+    public function inserir($dados)
+    {
+        return $this->db->insert("usuarios", $dados);
     }
 
-    public function buscar_por_id($id) {
-        return $this->db->get_where('usuarios', ['id' => $id])->row();
+    public function buscar_por_id($id)
+    {
+        return $this->db->get_where("usuarios", ["id" => $id])->row();
     }
 
-    public function atualizar($id, $dados) {
-        $this->db->where('id', $id);
-        return $this->db->update('usuarios', $dados);
+    public function atualizar($id, $dados)
+    {
+        $this->db->where("id", $id);
+        return $this->db->update("usuarios", $dados);
     }
 
-    public function deletar($id) {
-        $this->db->where('id', $id);
-        return $this->db->delete('usuarios');
+    public function deletar($id)
+    {
+        $this->db->where("id", $id);
+        return $this->db->delete("usuarios");
     }
 }

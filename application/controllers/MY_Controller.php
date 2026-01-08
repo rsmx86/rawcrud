@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined("BASEPATH") or exit("No direct script access allowed");
 
 /**
  * @property CI_DB_query_builder $db
@@ -10,8 +10,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property Usuario_model $Usuario_model
  * @property Usuario_model $Cliente_model
  */
-class MY_Controller extends CI_Controller {
-        public function __construct() {
+class MY_Controller extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 }

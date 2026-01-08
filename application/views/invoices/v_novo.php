@@ -7,7 +7,9 @@
     <tr>
         <td colspan="2" bgcolor="#D6D2C4" style="padding:20px;">
             
-            <form action="<?= site_url('invoices/salvar_capa'); ?>" method="post">
+            <form action="<?= site_url(
+                "invoices/salvar_capa"
+            ) ?>" method="post">
                 
                 <table width="100%" border="1" cellspacing="0" cellpadding="8" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080">
                     <tr>
@@ -40,7 +42,7 @@
                         <td><font face="Arial" size="2">Issue Date (Data Emissão):</font></td>
                         <td>
                             <input type="date" name="data_emissao" required 
-                                   max="<?= date('Y-m-d'); ?>" 
+                                   max="<?= date("Y-m-d") ?>" 
                                    style="width:95%;">
                         </td>
                     </tr>
@@ -60,7 +62,9 @@
                 <table width="100%" border="0">
                     <tr>
                         <td>
-                            <button type="button" onclick="window.location.href='<?= site_url('invoices'); ?>'" style="width:100px; height:30px;">
+                            <button type="button" onclick="window.location.href='<?= site_url(
+                                "invoices"
+                            ) ?>'" style="width:100px; height:30px;">
                                 <font size="2">&lt;&lt; CANCEL</font>
                             </button>
                         </td>

@@ -22,20 +22,34 @@
                                     <font face="Arial" size="3">Active Session: <b>Ready for processing.</b></font>
                                 </td>
                                 <td align="right" valign="top">
-                                    <?php 
-                                        $user_nivel = $this->session->userdata('nivel');
-                                        if(in_array($user_nivel, ['Garage Chief', 'Chief Mechanic', 'ADM'])): 
-                                    ?>
-                                        <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer;" onclick="window.location='<?= site_url('usuarios'); ?>'">
+                                    <?php
+                                    $user_nivel = $this->session->userdata(
+                                        "nivel"
+                                    );
+                                    if (
+                                        in_array($user_nivel, [
+                                            "Garage Chief",
+                                            "Chief Mechanic",
+                                            "ADM",
+                                        ])
+                                    ): ?>
+                                        <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer;" onclick="window.location='<?= site_url(
+                                            "usuarios"
+                                        ) ?>'">
                                             <tr><td align="center"><font size="4">👥</font><br><font face="Arial" size="1"><b>OPERATORS</b></font></td></tr>
                                         </table>
-                                    <?php endif; ?>
+                                    <?php endif;
+                                    ?>
 
-                                    <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url('clientes'); ?>'">
+                                    <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url(
+                                        "clientes"
+                                    ) ?>'">
                                         <tr><td align="center"><font size="4">📇</font><br><font face="Arial" size="1"><b>CUSTOMERS</b></font></td></tr>
                                     </table>
 
-                                    <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url('catalogo'); ?>'">
+                                    <table border="2" cellpadding="5" cellspacing="0" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="display:inline-table; cursor: pointer; margin-left: 5px;" onclick="window.location='<?= site_url(
+                                        "catalogo"
+                                    ) ?>'">
                                         <tr><td align="center"><font size="4">📚</font><br><font face="Arial" size="1"><b>CATALOG</b></font></td></tr>
                                     </table>
                                 </td>
@@ -48,7 +62,9 @@
                             <tr>
                                 <td width="65%" valign="top">
                                     
-                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url('invoices'); ?>'">
+                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url(
+                                        "invoices"
+                                    ) ?>'">
                                         <tr>
                                             <td>
                                                 <font face="Arial Black" size="4" color="#A00000">📄 INVOICE_ENTRY</font><br>
@@ -60,20 +76,26 @@
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 12px;">
                                         <tr>
                                             <td width="48%">
-                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url('estoque'); ?>'">
+                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url(
+                                                    "estoque"
+                                                ) ?>'">
                                                     <tr><td><font face="Arial Black" size="3">📦 STOCK_INV</font><br><font face="Arial" size="1">Gestão física de peças.</font></td></tr>
                                                 </table>
                                             </td>
                                             <td width="4%"></td>
                                             <td width="48%">
-                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url('requisicoes'); ?>'">
+                                                <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;" onclick="window.location.href='<?= site_url(
+                                                    "requisicoes"
+                                                ) ?>'">
                                                     <tr><td><font face="Arial Black" size="3" color="#000080">🕊️ DISPATCH</font><br><font face="Arial" size="1">Saída e expedição.</font></td></tr>
                                                 </table>
                                             </td>
                                         </tr>
                                     </table>
 
-                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url('devolucao'); ?>'">
+                                    <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer; margin-bottom: 12px;" onclick="window.location.href='<?= site_url(
+                                        "devolucao"
+                                    ) ?>'">
                                         <tr>
                                             <td>
                                                 <font face="Arial Black" size="3" color="#808000">🔄 REVERSE_LOGISTICS [ESTORNO]</font><br>
@@ -83,7 +105,12 @@
                                     </table>
 
                                     <div>
-                                        <?php if(in_array($user_nivel, ['Garage Chief', 'ADM'])): ?>
+                                        <?php if (
+                                            in_array($user_nivel, [
+                                                "Garage Chief",
+                                                "ADM",
+                                            ])
+                                        ): ?>
                                             <table width="100%" border="2" cellspacing="0" cellpadding="15" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080" style="cursor: pointer;">
                                                 <tr><td><font face="Arial Black" size="3" color="#000000">📈 SYSTEM_REPORTS</font></td></tr>
                                             </table>
@@ -104,7 +131,7 @@
                                                         <td height="330" valign="top"> <font face="Courier New" size="2" color="#00FF00">
                                                                 [SYSTEM_LOG]<br>
                                                                 > session_init... OK<br>
-                                                                > auth_level: <?= $user_nivel; ?><br>
+                                                                > auth_level: <?= $user_nivel ?><br>
                                                                 > db_link: established<br>
                                                                 > status: AWAITING_CMD_<br>
                                                                 > station_id: G90-TK-01<br>

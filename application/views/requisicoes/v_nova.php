@@ -5,14 +5,16 @@
     </tr>
     <tr>
         <td bgcolor="#D6D2C4" style="padding:15px;">
-            <form action="<?= site_url('requisicoes/salvar') ?>" method="POST">
+            <form action="<?= site_url("requisicoes/salvar") ?>" method="POST">
                 
                 <fieldset style="border:1px solid #808080; padding:10px; margin-bottom:15px;">
                     <legend><font face="Arial" size="1"><b>1. DESTINATION_CLIENT</b></font></legend>
                     <select name="id_cliente" required style="width:100%; font-family:'Courier New'; font-weight:bold;">
                         <option value="">-- SELECT_CLIENT --</option>
-                        <?php foreach($clientes as $c): ?>
-                            <option value="<?= $c->id ?>"><?= strtoupper($c->nome_completo) ?></option>
+                        <?php foreach ($clientes as $c): ?>
+                            <option value="<?= $c->id ?>"><?= strtoupper(
+    $c->nome_completo
+) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </fieldset>
@@ -25,13 +27,15 @@
                                 <font face="Arial" size="1"><b>PRODUCT:</b></font><br>
                                 <select id="sel_produto" style="width:100%; font-family:'Courier New';">
     <option value="">-- SELECT_ITEM --</option>
-    <?php if(!empty($estoque)): ?>
-        <?php foreach($estoque as $item): ?>
+    <?php if (!empty($estoque)): ?>
+        <?php foreach ($estoque as $item): ?>
     <option value="<?= $item->id ?>" 
             data-nome="<?= $item->nome_produto ?>" 
             data-sku="<?= $item->sku ?>"
             data-preco="<?= $item->valor_venda ?>"
-            data-max="99999"> <?= $item->sku ?> | <?= strtoupper($item->nome_produto) ?> | R$ <?= number_format($item->valor_venda, 2, ',', '.') ?>
+            data-max="99999"> <?= $item->sku ?> | <?= strtoupper(
+     $item->nome_produto
+ ) ?> | R$ <?= number_format($item->valor_venda, 2, ",", ".") ?>
     </option>
 <?php endforeach; ?>
     <?php endif; ?>
@@ -62,7 +66,9 @@
 
                 <br>
                 <div align="right">
-                    <button type="button" onclick="window.location.href='<?= site_url('requisicoes') ?>'"><b>[ ABORT ]</b></button>
+                    <button type="button" onclick="window.location.href='<?= site_url(
+                        "requisicoes"
+                    ) ?>'"><b>[ ABORT ]</b></button>
                     <button type="submit" style="background:#000080; color:#FFF; padding:5px 20px;"><b>[ FINALIZE_REQUEST ]</b></button>
                 </div>
             </form>

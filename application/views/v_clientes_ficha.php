@@ -22,7 +22,9 @@
 <div class="window">
     <div class="title-bar">
         <span>CUSTOMER_FILE_VIEWER.EXE - <?= $cliente->nome_completo ?></span>
-        <span style="cursor:pointer" onclick="window.location='<?= site_url('clientes'); ?>'">[X]</span>
+        <span style="cursor:pointer" onclick="window.location='<?= site_url(
+            "clientes"
+        ) ?>'">[X]</span>
     </div>
     
     <div class="content">
@@ -32,8 +34,13 @@
                 <small>Technical Database v0.3.5</small>
             </div>
             <div style="text-align:right">
-                <strong>ID: #<?= str_pad($cliente->id, 5, "0", STR_PAD_LEFT) ?></strong><br>
-                <span>DATE: <?= date('d/m/Y') ?></span>
+                <strong>ID: #<?= str_pad(
+                    $cliente->id,
+                    5,
+                    "0",
+                    STR_PAD_LEFT
+                ) ?></strong><br>
+                <span>DATE: <?= date("d/m/Y") ?></span>
             </div>
         </div>
 
@@ -60,17 +67,21 @@
     <div class="footer-btns">
     <button class="btn-win" onclick="window.print()">[ PRINT_FILE ]</button>
     
-    <button class="btn-win" onclick="window.location='<?= site_url('clientes/editar/'.$cliente->id); ?>'" style="color: #000080;">[ EDIT_DATA ]</button>
+    <button class="btn-win" onclick="window.location='<?= site_url(
+        "clientes/editar/" . $cliente->id
+    ) ?>'" style="color: #000080;">[ EDIT_DATA ]</button>
     
     <button class="btn-win" onclick="confirmarExclusao(<?= $cliente->id ?>)" style="color: #a00000;">[ DELETE_RECORD ]</button>
     
-    <button class="btn-win" onclick="window.location='<?= site_url('clientes'); ?>'">[ CLOSE ]</button>
+    <button class="btn-win" onclick="window.location='<?= site_url(
+        "clientes"
+    ) ?>'">[ CLOSE ]</button>
 </div>
 
 <script>
 function confirmarExclusao(id) {
     if (confirm("WARNING: You are about to permanently delete this record.\n\nAre you sure you want to proceed?")) {
-        window.location.href = '<?= site_url('clientes/deletar/'); ?>' + id;
+        window.location.href = '<?= site_url("clientes/deletar/") ?>' + id;
     }
 }
 </script>>

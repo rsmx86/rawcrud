@@ -29,7 +29,9 @@
                     <tr>
                         <td align="center" valign="middle">
                             <br>
-                            <form action="<?php echo site_url('login/autenticar'); ?>" method="POST">
+                            <form action="<?php echo site_url(
+                                "login/autenticar"
+                            ); ?>" method="POST">
                                 
                                 <table border="0" cellpadding="5">
                                     <tr>

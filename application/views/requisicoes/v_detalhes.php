@@ -10,7 +10,10 @@
             <table width="100%" border="1" cellspacing="0" cellpadding="5" bgcolor="#C0C0C0" bordercolorlight="#FFFFFF" bordercolordark="#808080">
                 <tr>
                     <td><font size="1">CLIENTE / DESTINO:</font><br><b><?= $requisicao->nome_cliente ?></b></td>
-                    <td><font size="1">DATA SOLICITAÇÃO:</font><br><b><?= date('d/m/Y H:i', strtotime($requisicao->data_requisicao)) ?></b></td>
+                    <td><font size="1">DATA SOLICITAÇÃO:</font><br><b><?= date(
+                        "d/m/Y H:i",
+                        strtotime($requisicao->data_requisicao)
+                    ) ?></b></td>
                     <td align="center" bgcolor="#FFFF00">
                         <font color="#000000" size="1">STATUS:</font><br>
                         <b><?= $requisicao->status_requisicao ?></b>
@@ -30,15 +33,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($itens as $item): ?>
+                    <?php foreach ($itens as $item): ?>
                     <tr>
                         <td bgcolor="#FFFFCC" align="center">
                             <font face="Courier New" size="3"><b><?= $item->endereco_origem ?></b></font>
                         </td>
                         <td><font face="Arial" size="2"><?= $item->codigo_sku ?> - <?= $item->nome_produto ?></font></td>
-                        <td align="center"><font face="Arial" size="2"><?= strtoupper($item->lote_alocado) ?></font></td>
+                        <td align="center"><font face="Arial" size="2"><?= strtoupper(
+                            $item->lote_alocado
+                        ) ?></font></td>
                         <td align="right">
-                            <font face="Arial" size="3"><b><?= number_format($item->quantidade_pedida, 0, '', '.') ?></b></font>
+                            <font face="Arial" size="3"><b><?= number_format(
+                                $item->quantidade_pedida,
+                                0,
+                                "",
+                                "."
+                            ) ?></b></font>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -49,12 +59,16 @@
             <table border="0" width="100%">
                 <tr>
                     <td>
-                        <button onclick="window.location.href='<?= site_url('requisicoes'); ?>'" style="width:150px; height:25px;">&lt;&lt; BACK_TO_LIST</button>
+                        <button onclick="window.location.href='<?= site_url(
+                            "requisicoes"
+                        ) ?>'" style="width:150px; height:25px;">&lt;&lt; BACK_TO_LIST</button>
                     </td>
                     <td align="right">
-    <?php if ($requisicao->status_requisicao != 'FINALIZADA'): ?>
+    <?php if ($requisicao->status_requisicao != "FINALIZADA"): ?>
     <button onclick="if(confirm('CONFIRM SHIPMENT? This will deduct from physical stock.')) 
-            window.location.href='<?= site_url('requisicoes/confirmar_picking/'.$requisicao->id); ?>'" 
+            window.location.href='<?= site_url(
+                "requisicoes/confirmar_picking/" . $requisicao->id
+            ) ?>'" 
             style="background:#008000; color:#FFF; font-weight:bold; padding:10px;">
         [ CONFIRM PICKING AND SHIP ]
     </button>
@@ -71,13 +85,13 @@
     </tr>
 </table>
 
-<?php if($requisicao->status_requisicao == 'PICKING'): ?>
+<?php if ($requisicao->status_requisicao == "PICKING"): ?>
     <div style="background:#FFF3CD; border:1px solid #FFEEBA; padding:15px; margin-top:20px; width:95%; text-align:left;">
         <font face="Arial" size="2" color="#856404">
             <b>CUIDADO:</b> O picking já foi iniciado. Se precisar de alterar produtos ou quantidades, deve estornar primeiro para o saldo voltar às prateleiras.
         </font>
         <br><br>
-        <a href="<?= site_url('requisicoes/estornar/'.$requisicao->id); ?>" 
+        <a href="<?= site_url("requisicoes/estornar/" . $requisicao->id) ?>" 
            onclick="return confirm('Deseja realmente cancelar o picking e devolver os produtos para as posições originais?')"
            style="background: #dc3545; color: white; padding: 8px 15px; text-decoration: none; font-weight: bold; border-radius: 3px; font-family: Arial; size: 2;">
            [X] ESTORNAR_PICKING_AND_ROLLBACK

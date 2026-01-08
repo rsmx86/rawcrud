@@ -26,24 +26,46 @@
                                     <td align="center"><font face="Arial" size="3"><b>Operations</b></font></td>
                                 </tr>
 
-                                <?php if(!empty($usuarios)): ?>
-                                    <?php foreach($usuarios as $user): ?>
+                                <?php if (!empty($usuarios)): ?>
+                                    <?php foreach ($usuarios as $user): ?>
                                     <tr bgcolor="#FFFFFF">
-                                        <td><font face="Courier New" size="3" title="Operator Email: <?= $user->email; ?>" style="cursor: help;">
-        <?= $user->nome; ?>
+                                        <td><font face="Courier New" size="3" title="Operator Email: <?= $user->email ?>" style="cursor: help;">
+        <?= $user->nome ?>
     </font></td>
-                                        <td><font face="Courier New" size="3"><b><?= $user->nick; ?></b></font></td>
-                                        <td><font face="Courier New" size="2"><?= $user->nivel; ?></font></td>
+                                        <td><font face="Courier New" size="3"><b><?= $user->nick ?></b></font></td>
+                                        <td><font face="Courier New" size="2"><?= $user->nivel ?></font></td>
                                         <td><font face="Courier New" size="2">
-                                            <?= ($user->ultimo_acesso) ? date('d/m/Y H:i', strtotime($user->ultimo_acesso)) : '---'; ?>
+                                            <?= $user->ultimo_acesso
+                                                ? date(
+                                                    "d/m/Y H:i",
+                                                    strtotime(
+                                                        $user->ultimo_acesso
+                                                    )
+                                                )
+                                                : "---" ?>
                                         </font></td>
                                         
                                         <td align="center">
-                                            <?php if ($this->session->userdata('nivel') === 'Garage Chief'): ?>
-                                                <button onclick="window.location='<?= site_url('usuarios/editar/'.$user->id); ?>'" style="width:70px; height:25px; font-family:Arial; font-size:11px; cursor:pointer;">Edit</button>
+                                            <?php if (
+                                                $this->session->userdata(
+                                                    "nivel"
+                                                ) === "Garage Chief"
+                                            ): ?>
+                                                <button onclick="window.location='<?= site_url(
+                                                    "usuarios/editar/" .
+                                                        $user->id
+                                                ) ?>'" style="width:70px; height:25px; font-family:Arial; font-size:11px; cursor:pointer;">Edit</button>
                                                 
-                                                <?php if ($user->id !== $this->session->userdata('id_usuario')): ?>
-                                                    <button onclick="if(confirm('TERMINATE REGISTRY?')) window.location='<?= site_url('usuarios/excluir/'.$user->id); ?>'" 
+                                                <?php if (
+                                                    $user->id !==
+                                                    $this->session->userdata(
+                                                        "id_usuario"
+                                                    )
+                                                ): ?>
+                                                    <button onclick="if(confirm('TERMINATE REGISTRY?')) window.location='<?= site_url(
+                                                        "usuarios/excluir/" .
+                                                            $user->id
+                                                    ) ?>'" 
                                                         style="width:70px; height:25px; font-family:Arial; font-size:11px; cursor:pointer; color:darkred; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
                                                         Delete
                                                     </button>
@@ -61,8 +83,13 @@
 
                             <br>
                             <div align="right">
-                                <?php if ($this->session->userdata('nivel') === 'Garage Chief'): ?>
-                                    <button onclick="window.location='<?= site_url('usuarios/novo'); ?>'" style="width:210px; height:45px; font-family:Arial; font-size:13px; font-weight:bold; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
+                                <?php if (
+                                    $this->session->userdata("nivel") ===
+                                    "Garage Chief"
+                                ): ?>
+                                    <button onclick="window.location='<?= site_url(
+                                        "usuarios/novo"
+                                    ) ?>'" style="width:210px; height:45px; font-family:Arial; font-size:13px; font-weight:bold; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
                                         [ + ] ADD_NEW_OPERATOR
                                     </button>
                                 <?php endif; ?>

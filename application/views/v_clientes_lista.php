@@ -19,7 +19,9 @@
                                         <font face="Arial Black" size="5" color="#000080">CUSTOMER_DATABASE</font>
                                     </td>
                                     <td align="right">
-                                        <button onclick="window.location='<?= site_url('clientes/novo'); ?>'" style="width:120px; height:25px; font-family:Arial; font-size:11px; font-weight:bold; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
+                                        <button onclick="window.location='<?= site_url(
+                                            "clientes/novo"
+                                        ) ?>'" style="width:120px; height:25px; font-family:Arial; font-size:11px; font-weight:bold; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
                                             [+] NEW_ENTRY
                                         </button>
                                     </td>
@@ -39,21 +41,25 @@
                                     <td align="center"><font face="Arial" size="2"><b>CMD</b></font></td>
                                 </tr>
 
-                                <?php if(!empty($clientes)): ?>
-                                    <?php foreach($clientes as $c): ?>
+                                <?php if (!empty($clientes)): ?>
+                                    <?php foreach ($clientes as $c): ?>
                                     <tr bgcolor="#FFFFFF">
-                                        <td align="center"><font face="Courier New" size="2"><?= $c->id; ?></font></td>
+                                        <td align="center"><font face="Courier New" size="2"><?= $c->id ?></font></td>
                                         <td>
                                             <font face="Courier New" size="2" title="Registry Info" style="cursor: help;">
-                                                <?= strtoupper($c->nome_completo); ?>
+                                                <?= strtoupper(
+                                                    $c->nome_completo
+                                                ) ?>
                                             </font>
                                         </td>
-                                        <td><font face="Courier New" size="2"><b><?= $c->nick; ?></b></font></td>
-                                        <td><font face="Courier New" size="2"><?= $c->carro_modelo; ?></font></td>
-                                        <td><font face="Courier New" size="2"><?= $c->cidade_provincia; ?></font></td>
+                                        <td><font face="Courier New" size="2"><b><?= $c->nick ?></b></font></td>
+                                        <td><font face="Courier New" size="2"><?= $c->carro_modelo ?></font></td>
+                                        <td><font face="Courier New" size="2"><?= $c->cidade_provincia ?></font></td>
                                         
                                         <td align="center">
-                                            <button onclick="window.location='<?= site_url('clientes/visualizar/'.$c->id); ?>'" style="width:60px; height:20px; font-family:Arial; font-size:10px; cursor:pointer; background:#C0C0C0; border: 1px solid #FFFFFF; border-right:1px solid #5A5A5A; border-bottom:1px solid #5A5A5A;">
+                                            <button onclick="window.location='<?= site_url(
+                                                "clientes/visualizar/" . $c->id
+                                            ) ?>'" style="width:60px; height:20px; font-family:Arial; font-size:10px; cursor:pointer; background:#C0C0C0; border: 1px solid #FFFFFF; border-right:1px solid #5A5A5A; border-bottom:1px solid #5A5A5A;">
                                                 [OPEN]
                                             </button>
                                         </td>
@@ -69,7 +75,9 @@
                             </table>
 
                             <br>
-                            <font face="Arial" size="1" color="#404040">Total Objects: <?= count($clientes); ?> entry(s) | STATUS: SELECTED</font>
+                            <font face="Arial" size="1" color="#404040">Total Objects: <?= count(
+                                $clientes
+                            ) ?> entry(s) | STATUS: SELECTED</font>
                         </td>
                     </tr>
                 </table>

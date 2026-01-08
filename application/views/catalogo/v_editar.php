@@ -1,5 +1,5 @@
 <center>
-<form action="<?= site_url('catalogo/atualizar'); ?>" method="post">
+<form action="<?= site_url("catalogo/atualizar") ?>" method="post">
     <input type="hidden" name="id" value="<?= $produto->id ?>">
 
     <table width="600" border="2" cellspacing="0" cellpadding="2" bgcolor="#000000">
@@ -26,10 +26,22 @@
                         <td width="50%">
                             <font face="Arial" size="1"><b>UNIDADE_MEDIDA:</b></font><br>
                             <select name="unidade_medida" style="width:100%;">
-                                <option value="UN" <?= ($produto->unidade_medida == 'UN') ? 'selected' : '' ?>>UN - UNIDADE</option>
-                                <option value="PC" <?= ($produto->unidade_medida == 'PC') ? 'selected' : '' ?>>PC - PEÇA</option>
-                                <option value="KG" <?= ($produto->unidade_medida == 'KG') ? 'selected' : '' ?>>KG - QUILOGRAMA</option>
-                                <option value="LT" <?= ($produto->unidade_medida == 'LT') ? 'selected' : '' ?>>LT - LITRO</option>
+                                <option value="UN" <?= $produto->unidade_medida ==
+                                "UN"
+                                    ? "selected"
+                                    : "" ?>>UN - UNIDADE</option>
+                                <option value="PC" <?= $produto->unidade_medida ==
+                                "PC"
+                                    ? "selected"
+                                    : "" ?>>PC - PEÇA</option>
+                                <option value="KG" <?= $produto->unidade_medida ==
+                                "KG"
+                                    ? "selected"
+                                    : "" ?>>KG - QUILOGRAMA</option>
+                                <option value="LT" <?= $produto->unidade_medida ==
+                                "LT"
+                                    ? "selected"
+                                    : "" ?>>LT - LITRO</option>
                             </select>
                         </td>
                     </tr>
@@ -64,7 +76,9 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
                         <td>
-                            <button type="button" onclick="window.location.href='<?= site_url('catalogo'); ?>'"><b>< &nbsp;Cancel</b></button>
+                            <button type="button" onclick="window.location.href='<?= site_url(
+                                "catalogo"
+                            ) ?>'"><b>< &nbsp;Cancel</b></button>
                         </td>
                         <td align="right">
                             <button type="submit" style="width:120px; height:30px; background-color:#C0C0C0;"><b>Update_Record ></b></button>
@@ -82,21 +96,21 @@
 
     <script>
         // Popup de Erro (SKU Duplicado ou campos vazios)
-        <?php if($this->session->flashdata('erro_sku')): ?>
+        <?php if ($this->session->flashdata("erro_sku")): ?>
             Swal.fire({
                 icon: 'error',
                 title: 'Atenção!',
-                text: '<?php echo $this->session->flashdata('erro_sku'); ?>',
+                text: '<?php echo $this->session->flashdata("erro_sku"); ?>',
                 confirmButtonColor: '#d33'
             });
         <?php endif; ?>
 
         // Popup de Sucesso
-        <?php if($this->session->flashdata('sucesso')): ?>
+        <?php if ($this->session->flashdata("sucesso")): ?>
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',
-                text: '<?php echo $this->session->flashdata('sucesso'); ?>',
+                text: '<?php echo $this->session->flashdata("sucesso"); ?>',
                 timer: 2000,
                 showConfirmButton: false
             });

@@ -10,7 +10,9 @@
                     </tr>
                 </table>
 
-                <form action="<?= site_url('usuarios/atualizar'); ?>" method="POST">
+                <form action="<?= site_url(
+                    "usuarios/atualizar"
+                ) ?>" method="POST">
                     <input type="hidden" name="id" value="<?= $usuario->id ?>">
 
                     <table width="100%" border="0" cellpadding="25" cellspacing="0" bgcolor="#D6D2C4">
@@ -42,9 +44,18 @@
                                         <td><font face="Arial" size="3"><b>Access_Rank:</b></font></td>
                                         <td>
                                             <select name="nivel" style="width:100%; font-family: 'Courier New'; font-size:16px; border:2px inset #FFFFFF; padding:4px; background: #FFFFFF; height:32px;">
-                                                <option value="Mechanic" <?= ($usuario->nivel == 'Mechanic') ? 'selected' : '' ?>>Mechanic</option>
-                                                <option value="Chief Mechanic" <?= ($usuario->nivel == 'Chief Mechanic') ? 'selected' : '' ?>>Chief Mechanic</option>
-                                                <option value="Garage Chief" <?= ($usuario->nivel == 'Garage Chief') ? 'selected' : '' ?>>Garage Chief</option>
+                                                <option value="Mechanic" <?= $usuario->nivel ==
+                                                "Mechanic"
+                                                    ? "selected"
+                                                    : "" ?>>Mechanic</option>
+                                                <option value="Chief Mechanic" <?= $usuario->nivel ==
+                                                "Chief Mechanic"
+                                                    ? "selected"
+                                                    : "" ?>>Chief Mechanic</option>
+                                                <option value="Garage Chief" <?= $usuario->nivel ==
+                                                "Garage Chief"
+                                                    ? "selected"
+                                                    : "" ?>>Garage Chief</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -60,7 +71,9 @@
                                 <br><br>
 
                                 <div align="right">
-                                    <button type="button" onclick="window.location='<?= site_url('usuarios'); ?>'" style="width:130px; height:35px; font-family: Arial; font-size:12px; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
+                                    <button type="button" onclick="window.location='<?= site_url(
+                                        "usuarios"
+                                    ) ?>'" style="width:130px; height:35px; font-family: Arial; font-size:12px; cursor:pointer; background:#C0C0C0; border: 2px solid #FFFFFF; border-right:2px solid #5A5A5A; border-bottom:2px solid #5A5A5A;">
                                         CANCEL
                                     </button>
                                     &nbsp;

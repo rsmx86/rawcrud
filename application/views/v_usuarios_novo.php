@@ -10,7 +10,7 @@
                     </tr>
                 </table>
 
-                <form action="<?= site_url('usuarios/salvar'); ?>" method="POST">
+                <form action="<?= site_url("usuarios/salvar") ?>" method="POST">
                     <table width="100%" border="0" cellpadding="25" cellspacing="0" bgcolor="#D6D2C4">
                         <tr>
                             <td>
@@ -56,7 +56,9 @@
                                 </table>
                                 <br>
                                 <div align="right">
-                                    <button type="button" onclick="window.location='<?= site_url('usuarios'); ?>'">Cancel</button>
+                                    <button type="button" onclick="window.location='<?= site_url(
+                                        "usuarios"
+                                    ) ?>'">Cancel</button>
                                     <button type="submit"><b>[ COMMIT_REGISTRY ]</b></button>
                                 </div>
                             </td>

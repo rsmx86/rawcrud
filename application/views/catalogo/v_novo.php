@@ -1,5 +1,5 @@
 <center>
-<form action="<?= site_url('catalogo/salvar'); ?>" method="post">
+<form action="<?= site_url("catalogo/salvar") ?>" method="post">
     <table width="600" border="2" cellspacing="0" cellpadding="2" bgcolor="#000000">
         <tr bgcolor="#000080">
             <td>
@@ -67,7 +67,9 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
                         <td>
-                            <button type="button" onclick="window.location.href='<?= site_url('catalogo'); ?>'"><b>< &nbsp;Back</b></button>
+                            <button type="button" onclick="window.location.href='<?= site_url(
+                                "catalogo"
+                            ) ?>'"><b>< &nbsp;Back</b></button>
                         </td>
                         <td align="right">
                             <button type="submit" style="width:120px; height:30px;"><b>Finish_Next ></b></button>
@@ -89,21 +91,21 @@
 
     <script>
         // Popup de Erro (SKU Duplicado ou campos vazios)
-        <?php if($this->session->flashdata('erro_sku')): ?>
+        <?php if ($this->session->flashdata("erro_sku")): ?>
             Swal.fire({
                 icon: 'error',
                 title: 'Atenção!',
-                text: '<?php echo $this->session->flashdata('erro_sku'); ?>',
+                text: '<?php echo $this->session->flashdata("erro_sku"); ?>',
                 confirmButtonColor: '#d33'
             });
         <?php endif; ?>
 
         // Popup de Sucesso
-        <?php if($this->session->flashdata('sucesso')): ?>
+        <?php if ($this->session->flashdata("sucesso")): ?>
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',
-                text: '<?php echo $this->session->flashdata('sucesso'); ?>',
+                text: '<?php echo $this->session->flashdata("sucesso"); ?>',
                 timer: 2000,
                 showConfirmButton: false
             });

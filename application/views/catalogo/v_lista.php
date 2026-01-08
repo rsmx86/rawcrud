@@ -2,7 +2,9 @@
 <table width="98%" border="0" cellspacing="0" cellpadding="0">
     <tr>
         <td align="left">
-            <button onclick="window.location.href='<?= site_url('catalogo/novo') ?>'" style="cursor:pointer; padding: 5px 10px;">
+            <button onclick="window.location.href='<?= site_url(
+                "catalogo/novo"
+            ) ?>'" style="cursor:pointer; padding: 5px 10px;">
                 <b>[+] ADD_NEW_PRODUCT</b>
             </button>
         </td>
@@ -30,11 +32,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if(!empty($produtos)): ?>
-                        <?php foreach($produtos as $p): ?>
+                    <?php if (!empty($produtos)): ?>
+                        <?php foreach ($produtos as $p): ?>
                         <tr>
                             <td bgcolor="#F0F0F0"><font face="Courier New" size="2"><b><?= $p->codigo_sku ?></b></font></td>
-                            <td><font face="Arial" size="2"><?= strtoupper($p->nome_produto) ?></font></td>
+                            <td><font face="Arial" size="2"><?= strtoupper(
+                                $p->nome_produto
+                            ) ?></font></td>
                             <td>
                                 <font face="Arial" size="1">
                                     <?= strtoupper($p->fabricante) ?> 
@@ -42,13 +46,22 @@
                             </td>
                             <td align="center"><font face="Arial" size="2"><?= $p->unidade_medida ?></font></td>
                             <td align="right" bgcolor="#F9F9F9">
-                                <font face="Courier New" size="2">R$ <?= number_format($p->valor_unitario, 2, ',', '.') ?></font>
+                                <font face="Courier New" size="2">R$ <?= number_format(
+                                    $p->valor_unitario,
+                                    2,
+                                    ",",
+                                    "."
+                                ) ?></font>
                             </td>
                             <td align="center">
-                                <button onclick="window.location.href='<?= site_url('catalogo/editar/'.$p->id) ?>'" title="EDIT_ENTRY">
+                                <button onclick="window.location.href='<?= site_url(
+                                    "catalogo/editar/" . $p->id
+                                ) ?>'" title="EDIT_ENTRY">
                                     <b>[ EDIT ]</b>
                                 </button>
-                                <button onclick="if(confirm('Confirm Delete?')) window.location.href='<?= site_url('catalogo/excluir/'.$p->id) ?>'" title="DELETE_ENTRY">
+                                <button onclick="if(confirm('Confirm Delete?')) window.location.href='<?= site_url(
+                                    "catalogo/excluir/" . $p->id
+                                ) ?>'" title="DELETE_ENTRY">
                                     <b>[ X ]</b>
                                 </button>
                             </td>
@@ -73,21 +86,21 @@
 
     <script>
         // Popup de Erro (SKU Duplicado ou campos vazios)
-        <?php if($this->session->flashdata('erro_sku')): ?>
+        <?php if ($this->session->flashdata("erro_sku")): ?>
             Swal.fire({
                 icon: 'error',
                 title: 'Atenção!',
-                text: '<?php echo $this->session->flashdata('erro_sku'); ?>',
+                text: '<?php echo $this->session->flashdata("erro_sku"); ?>',
                 confirmButtonColor: '#d33'
             });
         <?php endif; ?>
 
         // Popup de Sucesso
-        <?php if($this->session->flashdata('sucesso')): ?>
+        <?php if ($this->session->flashdata("sucesso")): ?>
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',
-                text: '<?php echo $this->session->flashdata('sucesso'); ?>',
+                text: '<?php echo $this->session->flashdata("sucesso"); ?>',
                 timer: 2000,
                 showConfirmButton: false
             });

@@ -1,5 +1,5 @@
 <center>
-<form action="<?= site_url('requisicoes/atualizar'); ?>" method="post">
+<form action="<?= site_url("requisicoes/atualizar") ?>" method="post">
     <input type="hidden" name="id_requisicao" value="<?= $requisicao->id ?>">
 
     <table width="850" border="2" cellspacing="0" cellpadding="2" bgcolor="#000000">
@@ -25,7 +25,10 @@
                         </td>
                         <td width="30%">
                             <font size="1">DATA REGISTRO:</font><br>
-                            <b><?= date('d/m/Y H:i', strtotime($requisicao->data_requisicao)) ?></b>
+                            <b><?= date(
+                                "d/m/Y H:i",
+                                strtotime($requisicao->data_requisicao)
+                            ) ?></b>
                         </td>
                     </tr>
                 </table>
@@ -41,7 +44,7 @@
                             <font size="1">SELECIONE O PRODUTO:</font><br>
                             <select id="sel_produto" style="width:100%">
                                 <option value="">-- PRODUTOS NO CATÁLOGO --</option>
-                                <?php foreach($produtos as $p): ?>
+                                <?php foreach ($produtos as $p): ?>
                                     <option value="<?= $p->id ?>" data-nome="<?= $p->nome_produto ?>" data-sku="<?= $p->codigo_sku ?>">
                                         <?= $p->codigo_sku ?> - <?= $p->nome_produto ?>
                                     </option>
@@ -70,7 +73,7 @@
                         </tr>
                     </thead>
                     <tbody id="corpo_edit">
-                        <?php foreach($itens_atuais as $item): 
+                        <?php foreach ($itens_atuais as $item):
                             $randId = rand(1000, 9999); ?>
                         <tr id="row_<?= $randId ?>">
                             <td bgcolor="#F0F0F0"><font size="2"><?= $item->codigo_sku ?></font>
@@ -78,13 +81,14 @@
                             </td>
                             <td><font size="2"><?= $item->nome_produto ?></font></td>
                             <td align="right">
-                                <input type="number" name="itens[quantidade][]" value="<?= (int)$item->quantidade_pedida ?>" style="width:60px; text-align:right;">
+                                <input type="number" name="itens[quantidade][]" value="<?= (int) $item->quantidade_pedida ?>" style="width:60px; text-align:right;">
                             </td>
                             <td align="center">
                                 <button type="button" onclick="document.getElementById('row_<?= $randId ?>').remove()" style="color:red;"><b>X</b></button>
                             </td>
                         </tr>
-                        <?php endforeach; ?>
+                        <?php
+                        endforeach; ?>
                     </tbody>
                 </table>
 
@@ -92,7 +96,9 @@
                 <table width="100%" border="0">
                     <tr>
                         <td>
-                            <button type="button" onclick="window.location.href='<?= site_url('requisicoes') ?>'">[ CANCEL_EDIT ]</button>
+                            <button type="button" onclick="window.location.href='<?= site_url(
+                                "requisicoes"
+                            ) ?>'">[ CANCEL_EDIT ]</button>
                         </td>
                         <td align="right">
                             <button type="submit" style="height:30px; font-weight:bold; background-color: #C0C0C0;">[ SAVE_CHANGES_AND_RECALCULATE ]</button>
